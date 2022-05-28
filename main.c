@@ -1,3 +1,4 @@
+#include "display.h"
 #include "sudoku.h"
 #include <bits/types.h>
 #include <stdio.h>
@@ -7,35 +8,30 @@
 
 int main(void){
     // Initialisierung der einzelnen fenster
-    WINDOW * mainwin, * childwin;
-    int ch;
-
-
-    // Randparameter definieren
-    int width = 37,
-        height = 19,
-        rows = 25,
-        cols = 80;
-
-    //int x = (cols - width) / 2;
-    //int y = (rows - height) / 2;
+    WINDOW * mainwin, * board, * stats_window;
 
     // Bei Error nach sterr schreiben und sicher abbrechen
     if ((mainwin = initscr()) == NULL){
-        fprintf(stderr, "Error initialising ncurses.\n");
+        fprintf(stderr, "Fenster konte nicht gestartet werden.\n");
         exit_curses(1);
     }
 
+    init_color_sceem();
 
-    // neues untergeortnetes Fenster
-    childwin = subwin(mainwin, height, width, 0, 0);
-    box(childwin,0,0);
-    // keypad aktivieren
-    noecho();
-    keypad(mainwin, TRUE);
+    // timer Starten
+    time_t time_started, time_now;
+    time_started = time(NULL);
 
+    // Intialisierung des Gamestates
+    struct Stats stats;
+    stats.time_started = time_started;
+    stats.max_mistakes = 3;
+    stats.mistakes = 0;
+
+
+    // test set
     char fields[9][9] = {
-        {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+        {'1', '2', '3', '4', '5', '6', '7', '8', '9'},
         {'1', '2', '3', '4', '5', '6', '7', '8', '9'},
         {'1', '2', '3', '4', '5', '6', '7', '8', '9'},
         {'1', '2', '3', '4', '5', '6', '7', '8', '9'},
@@ -46,48 +42,48 @@ int main(void){
         {'1', '2', '3', '4', '5', '6', '7', '8', '9'},
     };
     //random_grid(&fields);
+    
+    // Größe des Sudokufeldes
+    int width = 37,
+        height = 19;
+    /**
+     * Sudoku-Feld
+     * Parent ,Höhe, ,Weite, Y Offset ,X Offset
+     */
+    board = subwin(mainwin, height, width, 0, 0);
+    // keypad aktivieren
+    noecho();
+    keypad(board, TRUE);
+
+    // Status-Fenster rechts neben Feld
+    stats_window = subwin(mainwin, 10, 9, 0, width + 1);
 
 
-    print_board(fields, childwin);
+    // Starten der Spieldarstellung
+    print_game(fields, mainwin, board, stats_window, stats);
 
-    refresh();
 
+    //refresh();
+
+
+    // Setzt Zeit, wie Lange gewrtet wird bis getch() -1 zurückgibt
+    halfdelay(10);
+
+    // Key-Input
+    int ch;
     // Loop bis zum manuellen abbruch
     while ((ch = getch()) != 'q'){
-        switch(ch){
-            case KEY_UP:
-                //if (y>0)
-                //    --y;
-                break;
-            case KEY_DOWN:
-                //if (y < (rows - height))
-                //    ++y;
-                break;
-            case KEY_LEFT:
-                //if (x > 0)
-                //    --x;
-                break;
-            case KEY_RIGHT:
-                //if (x < (cols - width))
-                //    ++x;
-                break;
-            case KEY_HOME:
-                //x = 0;
-                //y = 0;
-                break;
-            default:
-                mvwaddstr(childwin, 1, 4, "default");
-
-        }
-        // mvwin(childwin, y, x);
-        wrefresh(childwin);
+        // Userinput verarbeiten
+        use_input(ch, mainwin, board, stats_window);
+        refresh_timer(stats_window, time_started);
     }
 
     // Beenden des Programms
-    delwin(childwin);
+    delwin(board);
     delwin(mainwin);
     endwin();
     refresh();
 
     return 0;
 }
+
