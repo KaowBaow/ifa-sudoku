@@ -16,7 +16,6 @@ int main(void){
         exit_curses(1);
     }
 
-    init_color_sceem();
 
     // timer Starten
     time_t time_started, time_now;
@@ -27,6 +26,7 @@ int main(void){
     stats.time_started = time_started;
     stats.max_mistakes = 3;
     stats.mistakes = 0;
+    stats.available_tips = 1;
 
 
     // test set
@@ -53,10 +53,12 @@ int main(void){
     board = subwin(mainwin, height, width, 0, 0);
     // keypad aktivieren
     noecho();
-    keypad(board, TRUE);
+    curs_set(0);
+    //keypad(board, TRUE);
 
     // Status-Fenster rechts neben Feld
     stats_window = subwin(mainwin, 10, 9, 0, width + 1);
+    init_color_sceem();
 
 
     // Starten der Spieldarstellung
@@ -66,16 +68,23 @@ int main(void){
     //refresh();
 
 
+
     // Setzt Zeit, wie Lange gewrtet wird bis getch() -1 zurückgibt
     halfdelay(10);
 
     // Key-Input
-    int ch;
+    int ch, y_curs, x_curs;
+    int y_player = 1;
+    int x_player = 2;
     // Loop bis zum manuellen abbruch
     while ((ch = getch()) != 'q'){
+        // Etabliert pointer zu Koordinaten
+        getyx(mainwin, y_curs, x_curs);
+        // Abspeichern der Position
         // Userinput verarbeiten
-        use_input(ch, mainwin, board, stats_window);
+        use_input(ch, mainwin, board, stats_window, &y_player, &x_player);
         refresh_timer(stats_window, time_started);
+
     }
 
     // Beenden des Programms

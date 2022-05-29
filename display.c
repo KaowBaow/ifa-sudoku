@@ -1,7 +1,8 @@
 #include "display.h"
 #include <curses.h>
 
-// Private Funktionen können noch verschoben werden
+// Private Funktionen
+void print_tips(WINDOW * stats_window, struct Stats stats);
 void print_lines(WINDOW * board, WINDOW * stats_window);
 void print_controls(WINDOW * window, int board_height);
 void print_stats(WINDOW * stats_window, struct Stats stats);
@@ -19,7 +20,7 @@ void init_color_sceem(){
     // Normal
     init_pair(1, COLOR_BLACK, COLOR_WHITE);
     // Good
-    init_pair(2, COLOR_BLACK, COLOR_GREEN);
+    init_pair(2, COLOR_GREEN, COLOR_BLACK);
     // Warning
     init_pair(3, COLOR_BLACK, COLOR_WHITE);
     // Altert
@@ -38,7 +39,7 @@ void print_board(char fields[9][9], WINDOW * field){
     // Loop über alle Felder
     for(index_y = 0; index_y < 9; ++index_y){
         for(index_x = 0; index_x < 9; ++index_x){
-            fill_position(index_x, index_y, &position_x, &position_y);
+            index_to_position(index_y, index_x, &position_y, &position_x);
 
             mvwaddstr(field, position_y, position_x, "0");
             //mvwaddstr(field, position_y, position_x, &fields[index_y][index_x]);
@@ -49,10 +50,24 @@ void print_board(char fields[9][9], WINDOW * field){
 /**
  * Funktion zur ermittlung der Position der einzelnen Zahlen
  */
-void fill_position( int index_x, int index_y, int *position_x, int *position_y){
+void index_to_position( int index_y, int index_x, int *position_y, int *position_x){
     *position_x = (4 * (index_x + 1)) - 2;
     *position_y = (2 * (index_y)) + 1;
 }
+/**
+ * Funktion zur ermittlung der Position der einzelnen Zahlen
+ */
+void position_to_index(int position_y, int position_x, int *index_y, int *index_x){
+    /**
+     * X
+     * 1 3 5 7
+     *
+     * Y
+     */
+    *index_y = (position_y - 1) / 2;
+    *index_x = (position_x - 2) / 4;
+}
+
 
 
 /**
@@ -71,6 +86,28 @@ void print_lines(WINDOW * board, WINDOW * stats_window){
     // Vertikale Linien
     mvvline(1, 12, ACS_VLINE, 17);
     mvvline(1, 24, ACS_VLINE, 17);
+
+
+    // obere Knotenpunkte
+    mvaddstr(0,12, "+");
+    mvaddstr(0,24, "+");
+
+    //knotenpunkte links
+    mvaddstr(6,0, "+");
+    mvaddstr(12,0, "+");
+
+    //knotenpunkte rechts
+    mvaddstr(6,36, "+");
+    mvaddstr(12,36, "+");
+
+    // untere Knotenpunkte
+    mvaddstr(18,12, "+");
+    mvaddstr(18,24, "+");
+
+    mvaddstr(6,12, "+");
+    mvaddstr(6,24, "+");
+    mvaddstr(12,12, "+");
+    mvaddstr(12,24, "+");
 }
 
 /**
@@ -97,7 +134,7 @@ void print_controls(WINDOW * window,int board_height){
     mvwaddstr(window, first_line + 3, 2, "Leertaste - Speichern");
 }
 
-void refresh_timer(WINDOW * stats_window, int time_started){
+void refresh_timer(WINDOW *stats_window, int time_started){
     int time_now = time(NULL);
     int time_elapsed = time_now - time_started;
     int minutes = (int)(time_elapsed / 60);
@@ -115,58 +152,34 @@ void refresh_timer(WINDOW * stats_window, int time_started){
     wrefresh(stats_window);
 }
 
-void use_input(int ch, WINDOW * mainwin, WINDOW * board, WINDOW * stats_window){
-        switch(ch){
-            case KEY_UP:
-                //if (y>0)
-                //    --y;
-                break;
-            case KEY_DOWN:
-                //if (y < (rows - height))
-                //    ++y;
-                break;
-            case KEY_LEFT:
-                //if (x > 0)
-                //    --x;
-                break;
-            case KEY_RIGHT:
-                //if (x < (cols - width))
-                //    ++x;
-                break;
-            case KEY_HOME:
-                //x = 0;
-                //y = 0;
-                break;
-        }
-        //mvwaddstr(board, 1, 4, "default");
-
-        // mvwin(board, y, x);
-        //wrefresh(board);
-        //wrefresh(stats_window);
-}
-
 /**
  * Zeigt den Status des Spiels
+ * Refresht alle Module des Status Fensters
  */
-void print_stats(WINDOW * stats_window, struct Stats stats){
+void print_stats(WINDOW *stats_window, struct Stats stats){
     int h_align = 2;
     mvwaddstr(stats_window, 1, h_align, "Zeit");
 
-    // TODO: muss noch Display_Info implementieren
     refresh_timer(stats_window, stats.time_started);
 
     mvwaddstr(stats_window, 4, h_align, "Fehler");
     print_mistakes(stats_window, stats);
 
-    wrefresh(stats_window);
+
+    mvwaddstr(stats_window, 7, h_align, "Tips");
+
+    print_tips(stats_window, stats);
+    //wrefresh(stats_window);
 }
 
 /**
  * Zeigt, wie viele Fehler bereits gemacht wurden
  * TODO: Farbe funktioniert bis jetzt nicht
+ * Im Board funktioniert sie...
  */
-void print_mistakes(WINDOW * window, struct Stats stats){
-    char str_mistakes[5];
+void print_mistakes(WINDOW *window, struct Stats stats){
+    // Formatiert den zu zeigenden Status
+    char *str_mistakes;
     sprintf(str_mistakes, "%d/%d", stats.mistakes, stats.max_mistakes);
 
 
@@ -179,10 +192,28 @@ void print_mistakes(WINDOW * window, struct Stats stats){
     }else{
         attron(COLOR_PAIR(3));
     }
-    mvwaddstr(window, 5, 2, str_mistakes);
-    //mvprintw(1, 1, "HELLO");
-    mvwprintw(window, 1, 1, "HELLO");
+    
+    int beg_y, beg_x, 
+        offset_y = 5,
+        offset_x = 3;
+
+    getbegyx(window, beg_y,beg_x);
+    mvprintw(beg_y + offset_y, beg_x + offset_x, "%s", str_mistakes);
     attroff(COLOR_PAIR(2));
+}
+
+void print_tips(WINDOW *window, struct Stats stats){
+    mvwprintw(window, 8, 4, "%d", stats.available_tips);
+}
+
+void reverse_position(WINDOW *window, int y_position, int x_position, int direction){
+    int ch;
+    ch = mvinch(y_position, x_position);
+    if (direction == 1){
+        attron(A_REVERSE);
+    }
+    mvprintw(y_position, x_position, "%c", ch);
+    attroff(A_REVERSE);
 }
 
 /*
