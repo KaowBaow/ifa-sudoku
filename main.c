@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <curses.h>
 #include <sys/cdefs.h>
+#include <time.h>
+#include <unistd.h>
 
 
 int main(void){
@@ -15,11 +17,17 @@ int main(void){
         fprintf(stderr, "Fenster konte nicht gestartet werden.\n");
         exit_curses(1);
     }
+    //init_color_sceem();
+    //printw("\n _____           _       _          \n/  ___|         | |     | |         \n\\ `--. _   _  __| | ___ | | ___   _ \n`--. \\ | | |/ _` |/ _ \\| |/ / | | |\n/\\__/ / |_| | (_| | (_) |   <| |_| |\n\\____/ \\__,_|\\__,_|\\___/|_|\\_\\__,_|");
+    //refresh();
+    //sleep(5);
+
 
 
     // timer Starten
     time_t time_started, time_now;
     time_started = time(NULL);
+
 
     // Intialisierung des Gamestates
     struct Stats stats;

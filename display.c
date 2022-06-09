@@ -146,7 +146,7 @@ void refresh_timer(WINDOW *stats_window, int time_started){
         mvwaddstr(stats_window, 2, 2, "     ");
 
     // Erstellen und formatieren der anzuzeigenden Zeit
-    char timer_display[5];
+    char timer_display[22];
     sprintf(timer_display, "%d:%d", minutes, seconds);
     mvwaddstr(stats_window, 2, 2, timer_display);
     wrefresh(stats_window);
@@ -179,7 +179,7 @@ void print_stats(WINDOW *stats_window, struct Stats stats){
  */
 void print_mistakes(WINDOW *window, struct Stats stats){
     // Formatiert den zu zeigenden Status
-    char *str_mistakes;
+    char str_mistakes[22];
     sprintf(str_mistakes, "%d/%d", stats.mistakes, stats.max_mistakes);
 
 
