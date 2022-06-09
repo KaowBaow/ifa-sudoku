@@ -1,4 +1,4 @@
-#include "display.h"
+#include "sudoku.h"
 #include <curses.h>
 
 // Private Funktionen
@@ -32,16 +32,19 @@ void init_color_sceem(){
  * @input int fields[9][9] Momentan noch ungenutzt
  * @field WINDOW * Das Sudoku Feld
  */
-void print_board(char fields[9][9], WINDOW * field){
+void print_board(char (*fields)[9], WINDOW * field){
     int index_y,index_x;
     int position_x, position_y;
+    int val;
 
     // Loop über alle Felder
     for(index_y = 0; index_y < 9; ++index_y){
         for(index_x = 0; index_x < 9; ++index_x){
+            val = fields[index_x][index_y];
             index_to_position(index_y, index_x, &position_y, &position_x);
 
-            mvwaddstr(field, position_y, position_x, "0");
+
+            mvwaddstr(field, position_y, position_x, &fields[index_x][index_y]);
             //mvwaddstr(field, position_y, position_x, &fields[index_y][index_x]);
         }
     }

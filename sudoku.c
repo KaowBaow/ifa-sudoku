@@ -1,6 +1,5 @@
-#include "sudoku.h"
-#include "display.h"
 #include <curses.h>
+#include "sudoku.h"
 
 
 
@@ -21,8 +20,8 @@ void random_grid(char (*fields)[9][9]){
     // neues Feld erschaffen und darüber loopen
     char new_field[9][9];
     int row, col;
-    for(row = 0; 0 < 9; ++row){
-        for(col = 0; 0 < 9; ++col){
+    for(row = 0; row < 9; ++row){
+        for(col = 0; col < 9; ++col){
             // Zufällige Zahl zwischen 1-9
             new_field[row][col] = (rand() % 9) + 1;
         }
@@ -132,4 +131,16 @@ int move_right(int *x_player){
     }else{
         return -1;
     }
+}
+
+/**
+ *  generieren einer neuen StatsStruct
+*/
+struct Stats getStats(){
+    struct Stats stats;
+    stats.mistakes = 0;
+    stats.max_mistakes = 3;
+    stats.available_tips = 1;
+    sprintf(stats.difficulty, "LOW");
+    return stats;
 }

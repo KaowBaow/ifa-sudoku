@@ -1,11 +1,10 @@
-#include "display.h"
-#include "sudoku.h"
 #include <bits/types.h>
 #include <stdio.h>
 #include <curses.h>
 #include <sys/cdefs.h>
 #include <time.h>
 #include <unistd.h>
+#include "sudoku.h"
 
 
 int main(void){
@@ -30,14 +29,12 @@ int main(void){
 
 
     // Intialisierung des Gamestates
-    struct Stats stats;
+    struct Stats stats = getStats();
     stats.time_started = time_started;
-    stats.max_mistakes = 3;
-    stats.mistakes = 0;
-    stats.available_tips = 1;
 
 
     // test set
+    /**
     char fields[9][9] = {
         {'1', '2', '3', '4', '5', '6', '7', '8', '9'},
         {'1', '2', '3', '4', '5', '6', '7', '8', '9'},
@@ -49,7 +46,9 @@ int main(void){
         {'1', '2', '3', '4', '5', '6', '7', '8', '9'},
         {'1', '2', '3', '4', '5', '6', '7', '8', '9'},
     };
-    //random_grid(&fields);
+    */
+    char fields[9][9];
+    random_grid(&fields);
     
     // Größe des Sudokufeldes
     int width = 37,
@@ -100,6 +99,8 @@ int main(void){
     delwin(mainwin);
     endwin();
     refresh();
+    sleep(5);
+    clear();
 
     return 0;
 }
