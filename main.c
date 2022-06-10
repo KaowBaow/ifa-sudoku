@@ -47,8 +47,8 @@ int main(void){
         {'1', '2', '3', '4', '5', '6', '7', '8', '9'},
     };
     */
-    char fields[9][9];
-    random_grid(&fields);
+    int fields[9][9];
+    random_grid(fields);
     
     // Größe des Sudokufeldes
     int width = 37,

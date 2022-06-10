@@ -32,19 +32,20 @@ void init_color_sceem(){
  * @input int fields[9][9] Momentan noch ungenutzt
  * @field WINDOW * Das Sudoku Feld
  */
-void print_board(char (*fields)[9], WINDOW * field){
+void print_board(int fields[9][9], WINDOW * field){
     int index_y,index_x;
     int position_x, position_y;
-    int val;
+    char *val;
 
     // Loop über alle Felder
     for(index_y = 0; index_y < 9; ++index_y){
         for(index_x = 0; index_x < 9; ++index_x){
-            val = fields[index_x][index_y];
+            //val = fields[index_x][index_y];
             index_to_position(index_y, index_x, &position_y, &position_x);
+            sprintf(val, "%d", fields[index_x][index_y]);
 
 
-            mvwaddstr(field, position_y, position_x, &fields[index_x][index_y]);
+            mvwaddstr(field, position_y, position_x, val);
             //mvwaddstr(field, position_y, position_x, &fields[index_y][index_x]);
         }
     }
@@ -61,12 +62,6 @@ void index_to_position( int index_y, int index_x, int *position_y, int *position
  * Funktion zur ermittlung der Position der einzelnen Zahlen
  */
 void position_to_index(int position_y, int position_x, int *index_y, int *index_x){
-    /**
-     * X
-     * 1 3 5 7
-     *
-     * Y
-     */
     *index_y = (position_y - 1) / 2;
     *index_x = (position_x - 2) / 4;
 }
@@ -116,7 +111,7 @@ void print_lines(WINDOW * board, WINDOW * stats_window){
 /**
  * Erstellt Spiel View mit Sudoku Feld und Steuerungserklährung
  */
-void print_game(char fields[9][9], WINDOW * mainwin, WINDOW * board, WINDOW * stats_window, struct Stats stats){
+void print_game(int fields[9][9], WINDOW * mainwin, WINDOW * board, WINDOW * stats_window, struct Stats stats){
 
     print_lines(board, stats_window);
     print_board(fields, board);

@@ -15,16 +15,15 @@ struct Stats{
     int max_mistakes;
 };
 
-void random_grid(char (*fields)[9][9]);
+void random_grid(int (*fields)[9]);
 struct Stats getStats();
 
 
 void index_to_position( int index_y, int index_x, int *position_y, int *position_x);
 void position_to_index(int position_y, int position_x, int *index_y, int *index_x);
 void print_mistakes(WINDOW *, struct Stats);
-void print_board(char (*fields)[9], WINDOW * field);
-void random_grid(char (*fields)[9][9]);
-void print_game(char fields[9][9], WINDOW * mainwin, WINDOW * board, WINDOW * stats_window, struct Stats stats);
+void print_board(int fields[9][9], WINDOW * field);
+void print_game(int fields[9][9], WINDOW * mainwin, WINDOW * board, WINDOW * stats_window, struct Stats stats);
 void use_input(int ch, WINDOW * mainwin, WINDOW * board, WINDOW * stats_win, int *y_player, int * x_player);
 void refresh_timer(WINDOW * stats_window, int time_started);
 void init_color_sceem();
