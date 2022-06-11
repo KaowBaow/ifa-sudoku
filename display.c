@@ -1,5 +1,7 @@
 #include "sudoku.h"
 #include <curses.h>
+#include <unistd.h>
+#include <string.h>
 
 // Private Funktionen
 void print_tips(WINDOW * stats_window, struct Stats stats);
@@ -70,7 +72,6 @@ void position_to_index(int position_y, int position_x, int *index_y, int *index_
 
 /**
  * Malt die Linien des Sudokufeldes
- * TODO: hier fehlen noch die Chars für die Knotenpunkte
  */
 void print_lines(WINDOW * board, WINDOW * stats_window){
     // Erstellt einen Rahmen um die Input-Fenster
@@ -87,25 +88,26 @@ void print_lines(WINDOW * board, WINDOW * stats_window){
 
 
     // obere Knotenpunkte
-    mvaddstr(0,12, "+");
-    mvaddstr(0,24, "+");
+    mvaddch(0,12, ACS_TTEE);
+    mvaddch(0,24, ACS_TTEE);
 
     //knotenpunkte links
-    mvaddstr(6,0, "+");
-    mvaddstr(12,0, "+");
+    mvaddch(6,0, ACS_LTEE);
+    mvaddch(12,0, ACS_LTEE);
 
     //knotenpunkte rechts
-    mvaddstr(6,36, "+");
-    mvaddstr(12,36, "+");
+    mvaddch(6,36, ACS_RTEE);
+    mvaddch(12,36, ACS_RTEE);
 
     // untere Knotenpunkte
-    mvaddstr(18,12, "+");
-    mvaddstr(18,24, "+");
+    mvaddch(18,12, ACS_BTEE);
+    mvaddch(18,24, ACS_BTEE);
 
-    mvaddstr(6,12, "+");
-    mvaddstr(6,24, "+");
-    mvaddstr(12,12, "+");
-    mvaddstr(12,24, "+");
+    // Kreuzungen
+    mvaddch(6,12, ACS_PLUS);
+    mvaddch(6,24, ACS_PLUS);
+    mvaddch(12,12, ACS_PLUS);
+    mvaddch(12,24, ACS_PLUS);
 }
 
 /**
@@ -204,6 +206,9 @@ void print_tips(WINDOW *window, struct Stats stats){
     mvwprintw(window, 8, 4, "%d", stats.available_tips);
 }
 
+/**
+ * Stellt das ausgewählte Feld auf negativ
+ */
 void reverse_position(WINDOW *window, int y_position, int x_position, int direction){
     int ch;
     ch = mvinch(y_position, x_position);
@@ -214,12 +219,93 @@ void reverse_position(WINDOW *window, int y_position, int x_position, int direct
     attroff(A_REVERSE);
 }
 
-/*
-   hat irgendein Stackoverflow problem
-void debug(WINDOW * stats_window, char message[20]){
-
-    int y_position = stats_window->_yoffset;
-    sprintf(message, "%d", y_position);
-    mvwaddstr(stats_window, y_position, 3, message);
+void welcome_screen(){
+    mvprintw(1, 3," _____           _       _          \n");
+    mvprintw(2, 3,"/  ___|         | |     | |         \n");
+    mvprintw(3, 3,"\\ `--. _   _  __| | ___ | | ___   _ \n");
+    mvprintw(4, 3," `--. \\ | | |/ _` |/ _ \\| |/ / | | |\n");
+    mvprintw(5, 3,"/\\__/ / |_| | (_| | (_) |   <| |_| |\n");
+    mvprintw(6, 3,"\\____/ \\__,_|\\__,_|\\___/|_|\\_\\\\__,_|");
+    mvprintw(8, 7, " Beliebige Taste druecken");
+    getch();
+    clear();
+    //refresh();
 }
-*/
+
+struct menu_choice{
+    char display[10];
+    int highlighted;
+};
+
+
+/**
+ * Darstellung der Menuoptionen
+ */
+void print_options(WINDOW *win, struct Stats *stats){
+    // ein array aus menu choices
+    struct menu_choice choices[4] ={
+        {"Start", 1},
+        {"Laden", 0},
+        {"LVL", 0},
+        {"Schliessen", 0},
+    };
+
+
+    // input
+    int ch;
+    // y_pos des loops
+    int y_pos;
+    // Array iterator
+    int i;
+    // curser Position
+    int c_pos = 0;
+    do{
+        for (i = 0; i < 4; i++){
+            y_pos = 2 + (2 * i);
+            if (choices[i].highlighted)
+                wattron(win, A_REVERSE);
+
+            mvwaddstr(win, y_pos, 5, choices[i].display);
+            wattroff(win, A_REVERSE);
+        }
+
+        // highlight entfernen
+        choices[c_pos].highlighted = 0;
+        mvwprintw(win, 10, 1, "%d", c_pos);
+        mvwprintw(win, 11, 1, "%d", ch);
+
+        switch(ch){
+            case 65:
+            case KEY_UP:
+            case 27:
+                if (c_pos > 1){
+                    c_pos--;
+                }
+                break;
+            case 64:
+            case 79:
+            case KEY_DOWN:
+                if (c_pos < 4){
+                    c_pos++;
+                }
+                break;
+        }
+
+        choices[c_pos].highlighted = 1;
+
+
+    } while((ch = getch()) != 'q');
+
+}
+
+
+void print_menu(WINDOW * main_win, struct Stats *stats){
+    WINDOW *menu_win;
+    menu_win = subwin(main_win, 19, 37, 0, 0);
+
+    box(menu_win,0,0);
+    print_options(menu_win, stats);
+    
+    getch();
+    clear();
+}

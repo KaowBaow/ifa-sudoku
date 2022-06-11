@@ -9,19 +9,23 @@
 
 int main(void){
     // Initialisierung der einzelnen fenster
-    WINDOW * mainwin, * board, * stats_window;
+    WINDOW * mainwin, * board, * stats_window, * menu_win;
 
     // Bei Error nach sterr schreiben und sicher abbrechen
     if ((mainwin = initscr()) == NULL){
         fprintf(stderr, "Fenster konte nicht gestartet werden.\n");
         exit_curses(1);
     }
-    //init_color_sceem();
-    //printw("\n _____           _       _          \n/  ___|         | |     | |         \n\\ `--. _   _  __| | ___ | | ___   _ \n`--. \\ | | |/ _` |/ _ \\| |/ / | | |\n/\\__/ / |_| | (_| | (_) |   <| |_| |\n\\____/ \\__,_|\\__,_|\\___/|_|\\_\\__,_|");
-    //refresh();
-    //sleep(5);
 
+    // getippte chars tauchen nicht auf dem Bildschirm auf
+    noecho();
+    // curser unsichtbar machen
+    curs_set(0);
+    // würde ich gerne in welcome_screen auslagern ist dann aber buggy
+    init_color_sceem();
 
+    // Begrüst den Spieler
+    welcome_screen();
 
     // timer Starten
     time_t time_started, time_now;
@@ -32,48 +36,31 @@ int main(void){
     struct Stats stats = getStats();
     stats.time_started = time_started;
 
-
-    // test set
-    /**
-    char fields[9][9] = {
-        {'1', '2', '3', '4', '5', '6', '7', '8', '9'},
-        {'1', '2', '3', '4', '5', '6', '7', '8', '9'},
-        {'1', '2', '3', '4', '5', '6', '7', '8', '9'},
-        {'1', '2', '3', '4', '5', '6', '7', '8', '9'},
-        {'1', '2', '3', '4', '5', '6', '7', '8', '9'},
-        {'1', '2', '3', '4', '5', '6', '7', '8', '9'},
-        {'1', '2', '3', '4', '5', '6', '7', '8', '9'},
-        {'1', '2', '3', '4', '5', '6', '7', '8', '9'},
-        {'1', '2', '3', '4', '5', '6', '7', '8', '9'},
-    };
-    */
+    // erstellt eine Spielfeldmatrix
     int fields[9][9];
     random_grid(fields);
+
+    //print_menu(mainwin, &stats);
     
     // Größe des Sudokufeldes
-    int width = 37,
-        height = 19;
-    /**
-     * Sudoku-Feld
-     * Parent ,Höhe, ,Weite, Y Offset ,X Offset
-     */
-    board = subwin(mainwin, height, width, 0, 0);
-    // keypad aktivieren
-    noecho();
-    curs_set(0);
-    //keypad(board, TRUE);
+    int width = 37, height = 19;
+
+                // Sudoku-Feld
+                // Parent,  Höhe,   Weite, Y Offset, X Offset
+    board = subwin(mainwin, height, width, 0,        0);
+    // Mousesupport für board Aktivieren
+    keypad(mainwin, TRUE);
+    keypad(board, TRUE);
+    keypad(stats_window, TRUE);
+    
 
     // Status-Fenster rechts neben Feld
     stats_window = subwin(mainwin, 10, 9, 0, width + 1);
-    init_color_sceem();
+    //init_color_sceem();
 
 
     // Starten der Spieldarstellung
     print_game(fields, mainwin, board, stats_window, stats);
-
-
-    //refresh();
-
 
 
     // Setzt Zeit, wie Lange gewrtet wird bis getch() -1 zurückgibt
@@ -95,12 +82,7 @@ int main(void){
     }
 
     // Beenden des Programms
-    delwin(board);
-    delwin(mainwin);
-    endwin();
-    refresh();
-    sleep(5);
-    clear();
+    delwin(board); delwin(mainwin); endwin(); clear(); refresh();
 
     return 0;
 }

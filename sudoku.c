@@ -10,7 +10,6 @@ int move_right(int *x_player);
 
 /**
  * Füllt das Feld volkommen Random
- * TODO: Führt bei Benutzen zu einem Segmentation Fault
  */
 void random_grid(int (*fields)[9]){
     // Initialisieren des Random-Seeds
@@ -26,7 +25,6 @@ void random_grid(int (*fields)[9]){
             fields[row][col] = (rand() % 9) + 1;
         }
     }
-    //fields = &new_field;
 }
 
 void use_input(
@@ -64,6 +62,7 @@ void use_input(
 
         case 'm':
             //menu
+            print_menu(mainwin);
             success = -1;
             break;
 
@@ -71,6 +70,10 @@ void use_input(
             //tip
             success = -1;
             break;
+
+        case KEY_MOUSE:
+            success = 5;
+
 
         case KEY_HOME:
         default:
@@ -86,7 +89,10 @@ void use_input(
     mvprintw(18, 40, "          ");
     mvprintw(20, 40, "          ");
     mvprintw(21, 40, "          ");
+
+    // Bewegung oder Aktion hat funktioniert
     mvprintw(16, 40, "S:%d", success);
+
     mvprintw(15, 40, "K:%d", ch);
     mvprintw(17, 40, "Y:%d", *y_player);
     mvprintw(18, 40, "X:%d", *x_player);
