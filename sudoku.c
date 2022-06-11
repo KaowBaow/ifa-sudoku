@@ -62,7 +62,7 @@ void use_input(
 
         case 'm':
             //menu
-            print_menu(mainwin);
+            //print_menu(mainwin);
             success = -1;
             break;
 
