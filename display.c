@@ -233,15 +233,32 @@ void welcome_screen(){
 }
 
 struct menu_choice{
-    char display[10];
+    char display[12];
     int highlighted;
 };
+
+void select_choice(struct menu_choice choices[4]){
+    int i;
+    int selected = -1;
+    // Welcher Menu-Index wurde selected ?
+    for (i = 0; i < 4; i++)
+        if (choices[i].highlighted)
+            selected = i;
+    
+    switch(selected){
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+    }
+}
 
 
 /**
  * Darstellung der Menuoptionen
  */
 void print_options(WINDOW *win, struct Stats *stats){
+    keypad(win, TRUE);
     // ein array aus menu choices
     struct menu_choice choices[4] ={
         {"Start", 1},
@@ -252,7 +269,7 @@ void print_options(WINDOW *win, struct Stats *stats){
 
 
     // input
-    int ch;
+    int ch = -1;
     // y_pos des loops
     int y_pos;
     // Array iterator
@@ -268,33 +285,55 @@ void print_options(WINDOW *win, struct Stats *stats){
             mvwaddstr(win, y_pos, 5, choices[i].display);
             wattroff(win, A_REVERSE);
         }
+        mvwprintw(win, 10, 5, "%d", c_pos);
+        mvwprintw(win, 12, 5, "%d", ch);
+
+        // auf input warten
+        //halfdelay(10);
+        //refresh();
+
+        ch = getch();
 
         // highlight entfernen
         choices[c_pos].highlighted = 0;
-        mvwprintw(win, 10, 1, "%d", c_pos);
-        mvwprintw(win, 11, 1, "%d", ch);
+
+        // debug
+        //mvwprintw(win, 10, 1, "%d", c_pos);
+        //mvwprintw(win, 11, 1, "%d", ch);
+        //mvwaddstr(win, 12, 1, "HALLLOO");
+        refresh();
 
         switch(ch){
-            case 65:
-            case KEY_UP:
-            case 27:
-                if (c_pos > 1){
+            //case 65:
+            //case KEY_UP:
+            case 'w':
+                if (c_pos > 0){
                     c_pos--;
                 }
                 break;
-            case 64:
-            case 79:
-            case KEY_DOWN:
-                if (c_pos < 4){
+            //case 64:
+            //case 79:
+            //case KEY_DOWN:
+            //case 27:
+            case 's':
+                if (c_pos < 3){
                     c_pos++;
                 }
                 break;
+            case KEY_ENTER:
+                select_choice(choices);
+
         }
 
         choices[c_pos].highlighted = 1;
 
+        // Vorläufiger breakout
+        //if (ch == 'q')
+            //clear();
+            //break;
+        clear();
 
-    } while((ch = getch()) != 'q');
+    } while(1);
 
 }
 
@@ -304,8 +343,12 @@ void print_menu(WINDOW * main_win, struct Stats *stats){
     menu_win = subwin(main_win, 19, 37, 0, 0);
 
     box(menu_win,0,0);
+    // Options loop
     print_options(menu_win, stats);
+
+    mvwaddstr(main_win, 5, 5, "TEST");
+    refresh();
+    sleep(2);
     
-    getch();
     clear();
 }
