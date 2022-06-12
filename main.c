@@ -37,10 +37,10 @@ int main(void){
     stats.time_started = time_started;
 
     // erstellt eine Spielfeldmatrix
-    int fields[9][9];
-    random_grid(fields);
+    //int fields[9][9];
+    //random_grid(fields);
 
-    //print_menu(mainwin, &stats);
+    print_menu(mainwin, &stats);
     
     // Größe des Sudokufeldes
     int width = 37, height = 19;
@@ -51,7 +51,7 @@ int main(void){
     // Mousesupport für board Aktivieren
     keypad(mainwin, TRUE);
     keypad(board, TRUE);
-    keypad(stats_window, TRUE);
+    //keypad(stats_window, TRUE);
     
 
     // Status-Fenster rechts neben Feld
@@ -60,7 +60,7 @@ int main(void){
 
 
     // Starten der Spieldarstellung
-    print_game(fields, mainwin, board, stats_window, stats);
+    print_game(stats.fields, mainwin, board, stats_window, stats);
 
 
     // Setzt Zeit, wie Lange gewrtet wird bis getch() -1 zurückgibt
@@ -76,7 +76,7 @@ int main(void){
         getyx(mainwin, y_curs, x_curs);
         // Abspeichern der Position
         // Userinput verarbeiten
-        use_input(ch, mainwin, board, stats_window, &y_player, &x_player);
+        use_input(ch, mainwin, board, stats_window, &y_player, &x_player, &stats);
         refresh_timer(stats_window, time_started);
 
     }

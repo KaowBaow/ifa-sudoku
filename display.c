@@ -29,6 +29,7 @@ void init_color_sceem(){
     init_pair(4, COLOR_BLACK, COLOR_WHITE);
 }
 
+
 /**
  * Funktion zum Aufzeichnen des Boards
  * @input int fields[9][9] Momentan noch ungenutzt
@@ -237,20 +238,49 @@ struct menu_choice{
     int highlighted;
 };
 
-void select_choice(struct menu_choice choices[4]){
+
+/**
+ * gibt zurück, welcher menu_choice ausgewählt wurde
+ */
+int get_choice(struct menu_choice choices[4]){
+
     int i;
-    int selected = -1;
-    // Welcher Menu-Index wurde selected ?
     for (i = 0; i < 4; i++)
         if (choices[i].highlighted)
-            selected = i;
+            return i;
+
+    return -1;
+}
+
+int select_choice(struct menu_choice choices[4], struct Stats *stats){
+    // Welcher Menu-Index wurde selected ?
+    int selected = get_choice(choices);
     
+    int done = 0;
     switch(selected){
+        // Start
         case 0:
+            // Normaler starten in ein neues Spiel
+            random_grid(stats->fields);
+            done = 1;
+            break;
+        // Laden
         case 1:
+            done = 0;
+            break;
+
+        // LVL
         case 2:
+            done = 0;
+            break;
+        // Schließen
         case 3:
+            done = 0;
+            break;
+        default:
+            done = -1;
     }
+    return done;
 }
 
 
@@ -268,6 +298,7 @@ void print_options(WINDOW *win, struct Stats *stats){
     };
 
 
+    int done = 0;
     // input
     int ch = -1;
     // y_pos des loops
@@ -287,26 +318,18 @@ void print_options(WINDOW *win, struct Stats *stats){
         }
         mvwprintw(win, 10, 5, "%d", c_pos);
         mvwprintw(win, 12, 5, "%d", ch);
+        mvwprintw(win, 14, 5, "%d", done);
 
         // auf input warten
-        //halfdelay(10);
-        //refresh();
-
         ch = getch();
-
-        // highlight entfernen
-        choices[c_pos].highlighted = 0;
-
-        // debug
-        //mvwprintw(win, 10, 1, "%d", c_pos);
-        //mvwprintw(win, 11, 1, "%d", ch);
-        //mvwaddstr(win, 12, 1, "HALLLOO");
         refresh();
 
         switch(ch){
             //case 65:
             //case KEY_UP:
             case 'w':
+                // highlight entfernen
+                choices[c_pos].highlighted = 0;
                 if (c_pos > 0){
                     c_pos--;
                 }
@@ -316,22 +339,37 @@ void print_options(WINDOW *win, struct Stats *stats){
             //case KEY_DOWN:
             //case 27:
             case 's':
+                // highlight entfernen
+                choices[c_pos].highlighted = 0;
                 if (c_pos < 3){
                     c_pos++;
                 }
                 break;
+
+            case 'a':
+                change_difficulty(stats, -1);
+                break;
+            case 'd':
+                change_difficulty(stats, 1);
+                break;
+
+            case 'q':
+                done = 1;
+                break;
+
             case KEY_ENTER:
-                select_choice(choices);
+            case 10:
+                // TODO ändert nichts ab
+                done = select_choice(choices, stats);
 
         }
 
         choices[c_pos].highlighted = 1;
 
-        // Vorläufiger breakout
-        //if (ch == 'q')
-            //clear();
-            //break;
         clear();
+        // Vorläufiger breakout
+        if (done)
+            break;
 
     } while(1);
 
@@ -348,7 +386,6 @@ void print_menu(WINDOW * main_win, struct Stats *stats){
 
     mvwaddstr(main_win, 5, 5, "TEST");
     refresh();
-    sleep(2);
     
     clear();
 }

@@ -13,13 +13,14 @@ struct Stats{
     // enum "LOW" "MEDIUM" "HARD"
     char difficulty[6];
     int max_mistakes;
+    int fields[9][9];
 };
 
 void random_grid(int (*fields)[9]);
 struct Stats getStats();
 
 
-void use_input(int ch, WINDOW * mainwin, WINDOW * board, WINDOW * stats_win, int *y_player, int * x_player);
+void use_input(int ch, WINDOW * mainwin, WINDOW * board, WINDOW * stats_win, int *y_player, int * x_player, struct Stats *stats);
 // Display
 void refresh_timer(WINDOW * stats_window, int time_started);
 void init_color_sceem();
@@ -32,3 +33,4 @@ void print_mistakes(WINDOW *window, struct Stats);
 void print_board(int fields[9][9], WINDOW * field);
 void print_game(int fields[9][9], WINDOW * mainwin, WINDOW * board, WINDOW * stats_window, struct Stats stats);
 void print_menu(WINDOW* main_win, struct Stats *stats);
+void change_difficulty(struct Stats *stats, int val);

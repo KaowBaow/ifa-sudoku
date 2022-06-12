@@ -30,12 +30,15 @@ void random_grid(int (*fields)[9]){
 void use_input(
         int ch,
         WINDOW * mainwin, WINDOW * board, WINDOW * stats_window,
-        int *y_player, int *x_player
+        int *y_player, int *x_player, struct Stats *stats
         ){
     int success;
+
+    // Das Highlighting an der Selektierten Stelle entfernen
     reverse_position(board, *y_player, *x_player, 0);
     
     switch(ch){
+        // Bewegung in alles Richtungen
         case KEY_UP:
         case 65:
         case 'w':
@@ -62,8 +65,10 @@ void use_input(
 
         case 'm':
             //menu
-            //print_menu(mainwin);
-            success = -1;
+            print_menu(mainwin, stats);
+            // board resetten
+            print_game(stats->fields, mainwin, board, stats_window, *stats);
+            success = 1;
             break;
 
         case 't':
@@ -71,6 +76,7 @@ void use_input(
             success = -1;
             break;
 
+        // kriege ich in meinem setup nicht aufgefangen
         case KEY_MOUSE:
             success = 5;
 
@@ -149,4 +155,20 @@ struct Stats getStats(){
     stats.available_tips = 1;
     sprintf(stats.difficulty, "LOW");
     return stats;
+}
+
+// TODO Ändert noch nicht die Inputstats ab
+void change_difficulty(struct Stats *stats, int val){
+    // Von high oder low in die mitte schalten
+    if ((strcmp("LOW", stats->difficulty) && val > 0) || (strcmp("HIGH", stats->difficulty) && val < 0)){
+            sprintf(stats->difficulty, "MED");
+    }
+    // Von Medium high oder runterschalten
+    if (strcmp("MED", stats->difficulty)){
+        if (val < 0)
+            sprintf(stats->difficulty, "LOW");
+        else if(val > 0)
+            sprintf(stats->difficulty, "HIGH");
+
+    }
 }
