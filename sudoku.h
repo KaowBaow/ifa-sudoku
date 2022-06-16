@@ -6,18 +6,21 @@
 #include <string.h>
 
 struct Stats{
-    int time_started;
-    int time_elapes;
+    time_t time_started;
+    time_t time_elapes;
     int mistakes;
-    int available_tips;
-    // enum "LOW" "MEDIUM" "HARD"
-    char difficulty[6];
     int max_mistakes;
+    int available_tips;
+    // enum "LOW" "MED" "HARD"
+    char difficulty[6];
     int fields[9][9];
 };
 
 void random_grid(int (*fields)[9]);
 struct Stats getStats();
+
+
+int strs_equal(char *str1, char *str2);
 
 
 void use_input(int ch, WINDOW * mainwin, WINDOW * board, WINDOW * stats_win, int *y_player, int * x_player, struct Stats *stats);
@@ -34,3 +37,4 @@ void print_board(int fields[9][9], WINDOW * field);
 void print_game(int fields[9][9], WINDOW * mainwin, WINDOW * board, WINDOW * stats_window, struct Stats stats);
 void print_menu(WINDOW* main_win, struct Stats *stats);
 void change_difficulty(struct Stats *stats, int val);
+void print_difficulty(WINDOW* stats_win, char difficulty[6]);

@@ -27,18 +27,9 @@ int main(void){
     // Begrüst den Spieler
     welcome_screen();
 
-    // timer Starten
-    time_t time_started, time_now;
-    time_started = time(NULL);
-
-
     // Intialisierung des Gamestates
     struct Stats stats = getStats();
-    stats.time_started = time_started;
-
-    // erstellt eine Spielfeldmatrix
-    //int fields[9][9];
-    //random_grid(fields);
+    stats.time_started = time(NULL);
 
     print_menu(mainwin, &stats);
     
@@ -48,14 +39,14 @@ int main(void){
                 // Sudoku-Feld
                 // Parent,  Höhe,   Weite, Y Offset, X Offset
     board = subwin(mainwin, height, width, 0,        0);
-    // Mousesupport für board Aktivieren
+    // Mousesupport für board Aktivieren TODO funktioniert absolut nicht
     keypad(mainwin, TRUE);
     keypad(board, TRUE);
     //keypad(stats_window, TRUE);
     
 
     // Status-Fenster rechts neben Feld
-    stats_window = subwin(mainwin, 10, 9, 0, width + 1);
+    stats_window = subwin(mainwin, 13, 9, 0, board->_maxx + 2);
     //init_color_sceem();
 
 
@@ -77,8 +68,7 @@ int main(void){
         // Abspeichern der Position
         // Userinput verarbeiten
         use_input(ch, mainwin, board, stats_window, &y_player, &x_player, &stats);
-        refresh_timer(stats_window, time_started);
-
+        refresh_timer(stats_window, stats.time_started);
     }
 
     // Beenden des Programms

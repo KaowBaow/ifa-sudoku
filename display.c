@@ -3,6 +3,9 @@
 #include <unistd.h>
 #include <string.h>
 
+// Länge der Menuoptionen
+#define CHOICES 4
+
 // Private Funktionen
 void print_tips(WINDOW * stats_window, struct Stats stats);
 void print_lines(WINDOW * board, WINDOW * stats_window);
@@ -24,9 +27,9 @@ void init_color_sceem(){
     // Good
     init_pair(2, COLOR_GREEN, COLOR_BLACK);
     // Warning
-    init_pair(3, COLOR_BLACK, COLOR_WHITE);
+    init_pair(3, COLOR_YELLOW, COLOR_BLACK);
     // Altert
-    init_pair(4, COLOR_BLACK, COLOR_WHITE);
+    init_pair(4, COLOR_RED, COLOR_BLACK);
 }
 
 
@@ -80,35 +83,35 @@ void print_lines(WINDOW * board, WINDOW * stats_window){
     box(board,0,0);
     box(stats_window, 0, 0);
     // Horizontale Linien
-    mvhline(6, 1, ACS_HLINE, 35);
-    mvhline(12, 1, ACS_HLINE, 35);
+    mvwhline(board, 6, 1, ACS_HLINE, 35);
+    mvwhline(board, 12, 1, ACS_HLINE, 35);
 
     // Vertikale Linien
-    mvvline(1, 12, ACS_VLINE, 17);
-    mvvline(1, 24, ACS_VLINE, 17);
+    mvwvline(board, 1, 12, ACS_VLINE, 17);
+    mvwvline(board, 1, 24, ACS_VLINE, 17);
 
 
     // obere Knotenpunkte
-    mvaddch(0,12, ACS_TTEE);
-    mvaddch(0,24, ACS_TTEE);
+    mvwaddch(board, 0, 12, ACS_TTEE);
+    mvwaddch(board, 0, 24, ACS_TTEE);
 
     //knotenpunkte links
-    mvaddch(6,0, ACS_LTEE);
-    mvaddch(12,0, ACS_LTEE);
+    mvwaddch(board, 6, 0, ACS_LTEE);
+    mvwaddch(board, 12, 0, ACS_LTEE);
 
     //knotenpunkte rechts
-    mvaddch(6,36, ACS_RTEE);
-    mvaddch(12,36, ACS_RTEE);
+    mvwaddch(board, 6, 36, ACS_RTEE);
+    mvwaddch(board, 12, 36, ACS_RTEE);
 
     // untere Knotenpunkte
-    mvaddch(18,12, ACS_BTEE);
-    mvaddch(18,24, ACS_BTEE);
+    mvwaddch(board, 18, 12, ACS_BTEE);
+    mvwaddch(board, 18, 24, ACS_BTEE);
 
     // Kreuzungen
-    mvaddch(6,12, ACS_PLUS);
-    mvaddch(6,24, ACS_PLUS);
-    mvaddch(12,12, ACS_PLUS);
-    mvaddch(12,24, ACS_PLUS);
+    mvwaddch(board, 6, 12, ACS_PLUS);
+    mvwaddch(board, 6, 24, ACS_PLUS);
+    mvwaddch(board, 12, 12, ACS_PLUS);
+    mvwaddch(board, 12, 24, ACS_PLUS);
 }
 
 /**
@@ -118,8 +121,7 @@ void print_game(int fields[9][9], WINDOW * mainwin, WINDOW * board, WINDOW * sta
 
     print_lines(board, stats_window);
     print_board(fields, board);
-    int board_height = 19;
-    print_controls(mainwin, board_height);
+    print_controls(mainwin, 19);
 
     print_stats(stats_window, stats);
 }
@@ -160,17 +162,16 @@ void refresh_timer(WINDOW *stats_window, int time_started){
 void print_stats(WINDOW *stats_window, struct Stats stats){
     int h_align = 2;
     mvwaddstr(stats_window, 1, h_align, "Zeit");
-
     refresh_timer(stats_window, stats.time_started);
 
     mvwaddstr(stats_window, 4, h_align, "Fehler");
     print_mistakes(stats_window, stats);
 
-
     mvwaddstr(stats_window, 7, h_align, "Tips");
-
     print_tips(stats_window, stats);
-    //wrefresh(stats_window);
+
+    mvwaddstr(stats_window, 10, h_align, "LVL");
+    print_difficulty(stats_window, stats.difficulty);
 }
 
 /**
@@ -183,28 +184,32 @@ void print_mistakes(WINDOW *window, struct Stats stats){
     char str_mistakes[22];
     sprintf(str_mistakes, "%d/%d", stats.mistakes, stats.max_mistakes);
 
-
-    //getyx()
-    
+    // noch keine Fehler
     if(stats.mistakes == 0){
-        attron(COLOR_PAIR(2));
+        wattron(window, COLOR_PAIR(2)); // grün
+
+    // noch mehr als ein fehler übrig
     }else if (stats.mistakes >= stats.max_mistakes - 1){
-        attron(COLOR_PAIR(4));
+        wattron(window, COLOR_PAIR(4)); // gelb
+
+    // gleich vorbei
     }else{
-        attron(COLOR_PAIR(3));
+        wattron(window, COLOR_PAIR(3)); // rot
     }
     
-    int beg_y, beg_x, 
-        offset_y = 5,
-        offset_x = 3;
+    int offset_y = 5,
+        offset_x = 2;
 
-    getbegyx(window, beg_y,beg_x);
-    mvprintw(beg_y + offset_y, beg_x + offset_x, "%s", str_mistakes);
-    attroff(COLOR_PAIR(2));
+    // Tatsächliches schreiben der Fehler
+    mvwprintw(window, offset_y, offset_x, "%s", str_mistakes);
+    // wieder auf normale Farbe shalten
+    wattroff(window, COLOR_PAIR(2));
+    wattroff(window, COLOR_PAIR(3));
+    wattroff(window, COLOR_PAIR(4));
 }
 
 void print_tips(WINDOW *window, struct Stats stats){
-    mvwprintw(window, 8, 4, "%d", stats.available_tips);
+    mvwprintw(window, 8, 2, "%d", stats.available_tips);
 }
 
 /**
@@ -242,17 +247,17 @@ struct menu_choice{
 /**
  * gibt zurück, welcher menu_choice ausgewählt wurde
  */
-int get_choice(struct menu_choice choices[4]){
+int get_choice(struct menu_choice choices[CHOICES]){
 
     int i;
-    for (i = 0; i < 4; i++)
+    for (i = 0; i < CHOICES; i++)
         if (choices[i].highlighted)
             return i;
 
     return -1;
 }
 
-int select_choice(struct menu_choice choices[4], struct Stats *stats){
+int select_choice(struct menu_choice choices[CHOICES], struct Stats *stats){
     // Welcher Menu-Index wurde selected ?
     int selected = get_choice(choices);
     
@@ -266,18 +271,23 @@ int select_choice(struct menu_choice choices[4], struct Stats *stats){
             break;
         // Laden
         case 1:
+            // TODO: Funktion zum Laden von Spielständen einbauen
             done = 0;
             break;
 
         // LVL
         case 2:
+            // Hier sollte eigentlich nichts großes passieren
             done = 0;
             break;
         // Schließen
         case 3:
+            // clean exit
+            exit(0);
             done = 0;
             break;
         default:
+            // Error fall sollte eigentlich nicht auftreten
             done = -1;
     }
     return done;
@@ -286,18 +296,19 @@ int select_choice(struct menu_choice choices[4], struct Stats *stats){
 
 /**
  * Darstellung der Menuoptionen
+ * TODO: Sollte es noch mehr Choices geben?
  */
 void print_options(WINDOW *win, struct Stats *stats){
     keypad(win, TRUE);
     // ein array aus menu choices
-    struct menu_choice choices[4] ={
+    struct menu_choice choices[CHOICES] ={
         {"Start", 1},
         {"Laden", 0},
         {"LVL", 0},
         {"Schliessen", 0},
     };
 
-
+    // breakout
     int done = 0;
     // input
     int ch = -1;
@@ -305,15 +316,21 @@ void print_options(WINDOW *win, struct Stats *stats){
     int y_pos;
     // Array iterator
     int i;
-    // curser Position
+    // curser Position zwischen 0 und choices len -1
     int c_pos = 0;
     do{
-        for (i = 0; i < 4; i++){
+        box(win, 0, 0);
+        for (i = 0; i < CHOICES; i++){
             y_pos = 2 + (2 * i);
             if (choices[i].highlighted)
                 wattron(win, A_REVERSE);
 
             mvwaddstr(win, y_pos, 5, choices[i].display);
+
+            // Bei lvl muss der Schwierigkeitsgrad hinter
+            if (strs_equal(choices[i].display, "LVL"))
+                mvwaddstr(win, y_pos, 9, stats->difficulty);
+
             wattroff(win, A_REVERSE);
         }
         mvwprintw(win, 10, 5, "%d", c_pos);
@@ -334,21 +351,19 @@ void print_options(WINDOW *win, struct Stats *stats){
                     c_pos--;
                 }
                 break;
-            //case 64:
-            //case 79:
-            //case KEY_DOWN:
-            //case 27:
             case 's':
                 // highlight entfernen
                 choices[c_pos].highlighted = 0;
-                if (c_pos < 3){
+                if (c_pos < CHOICES - 1){
                     c_pos++;
                 }
                 break;
 
+            // Schwierigkeit runter
             case 'a':
                 change_difficulty(stats, -1);
                 break;
+            // Schwierigkeit hoch
             case 'd':
                 change_difficulty(stats, 1);
                 break;
@@ -364,23 +379,23 @@ void print_options(WINDOW *win, struct Stats *stats){
 
         }
 
+        // Aktuelle Position makieren
         choices[c_pos].highlighted = 1;
 
         clear();
-        // Vorläufiger breakout
-        if (done)
-            break;
 
-    } while(1);
+    } while(done != 1);
 
 }
 
 
+/**
+ * Darstellung des Menus
+ */
 void print_menu(WINDOW * main_win, struct Stats *stats){
     WINDOW *menu_win;
     menu_win = subwin(main_win, 19, 37, 0, 0);
 
-    box(menu_win,0,0);
     // Options loop
     print_options(menu_win, stats);
 
@@ -388,4 +403,22 @@ void print_menu(WINDOW * main_win, struct Stats *stats){
     refresh();
     
     clear();
+}
+
+void print_difficulty(WINDOW* stats_win, char difficulty[6]){
+    if (strs_equal(difficulty, "LOW"))
+        wattron(stats_win, COLOR_PAIR(2));
+
+    else if (strs_equal(difficulty, "MED"))
+        wattron(stats_win, COLOR_PAIR(3));
+
+    else if (strs_equal(difficulty, "HIGH"))
+        wattron(stats_win, COLOR_PAIR(4));
+
+    mvwaddstr(stats_win, 11, 2, difficulty);
+
+    wattroff(stats_win, COLOR_PAIR(2));
+    wattroff(stats_win, COLOR_PAIR(3));
+    wattroff(stats_win, COLOR_PAIR(4));
+
 }
