@@ -38,3 +38,7 @@ void print_game(int fields[9][9], WINDOW * mainwin, WINDOW * board, WINDOW * sta
 void print_menu(WINDOW* main_win, struct Stats *stats);
 void change_difficulty(struct Stats *stats, int val);
 void print_difficulty(WINDOW* stats_win, char difficulty[6]);
+
+void changeMode(wchar_t c)
+void insert(char val);
+void pencil(char val);

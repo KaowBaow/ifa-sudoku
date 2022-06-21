@@ -11,7 +11,8 @@ int move_right(int *x_player);
 /**
  * Füllt das Feld volkommen Random
  */
-void random_grid(int (*fields)[9]){
+void random_grid(int (*fields)[9])
+{
     // Initialisieren des Random-Seeds
     time_t t;
     srand((unsigned) time(&t));
@@ -19,8 +20,10 @@ void random_grid(int (*fields)[9]){
     // neues Feld erschaffen und darüber loopen
     //char new_field[9][9];
     int row, col;
-    for(row = 0; row < 9; ++row){
-        for(col = 0; col < 9; ++col){
+    for(row = 0; row < 9; ++row)
+    {
+        for(col = 0; col < 9; ++col)
+        {
             // Zufällige Zahl zwischen 1-9
             fields[row][col] = (rand() % 9) + 1;
         }
@@ -28,67 +31,115 @@ void random_grid(int (*fields)[9]){
 }
 
 void use_input(
-        int ch,
-        WINDOW * mainwin, WINDOW * board, WINDOW * stats_window,
-        int *y_player, int *x_player, struct Stats *stats
-        ){
+    int ch,
+    WINDOW * mainwin, WINDOW * board, WINDOW * stats_window,
+    int *y_player, int *x_player, struct Stats *stats
+)
+{
     int success;
 
     // Das Highlighting an der Selektierten Stelle entfernen
     reverse_position(board, *y_player, *x_player, 0);
-    
-    switch(ch){
-        // Bewegung in alles Richtungen
-        case KEY_UP:
-        case 65:
-        case 'w':
-            success = move_up(y_player);
-            break;
 
-        case KEY_DOWN:
-        case 66:
-        case 's':
-            success = move_down(y_player);
-            break;
+    switch(ch)
+    {
+    // Bewegung in alles Richtungen
+    case KEY_UP:
+    case 65:
+    case 'w':
+        success = move_up(y_player);
+        break;
 
-        case KEY_LEFT:
-        case 68:
-        case 'a':
-            success = move_left(x_player);
-            break;
+    case KEY_DOWN:
+    case 66:
+    case 's':
+        success = move_down(y_player);
+        break;
 
-        case KEY_RIGHT:
-        case 67:
-        case 'd':
-            success = move_right(x_player);
-            break;
+    case KEY_LEFT:
+    case 68:
+    case 'a':
+        success = move_left(x_player);
+        break;
 
-        case 'm':
-            //menu
-            print_menu(mainwin, stats);
-            // board resetten
-            print_game(stats->fields, mainwin, board, stats_window, *stats);
-            success = 1;
-            break;
+    case KEY_RIGHT:
+    case 67:
+    case 'd':
+        success = move_right(x_player);
+        break;
 
-        case 't':
-            //tip
-            success = -1;
-            break;
+    case 'm':
+        //menu
+        print_menu(mainwin, stats);
+        // board resetten
+        print_game(stats->fields, mainwin, board, stats_window, *stats);
+        success = 1;
+        break;
 
-        // kriege ich in meinem setup nicht aufgefangen
-        case KEY_MOUSE:
-            success = 5;
+    case 't':
+        //tip
+        success = -1;
+        break;
+
+    // kriege ich in meinem setup nicht aufgefangen
+    case KEY_MOUSE:
+        success = 5;
+// change input mode with c
+    case 99:
+        if (mode == 'i')
+        {
+            changeMode('p');
+        }
+        else
+        {
+            changeMode('i');
+        }
+        break;
+    default:
+        if ((ch > '0' && ch <= '9') || ch == ' ')
+        {
+            window.select(ch);
+            if (mode == 'i')
+            {
+                insert(ch);
+            }
+            else if (mode == 'p')
+            {
+                pencil(ch);
+            }
+        }
 
 
-        case KEY_HOME:
-        default:
-            success = 0;
-            break;
+
+    case KEY_HOME:
+    default:
+        success = 0;
+        break;
     }
+    void Game::changeMode(wchar_t c)
+    {
+        std::string s;
+        switch (c)
+        {
+        case L'i':
+            s = "Input mode";
+            mode = c;
+            break;
+        case L'p':
+            s = "Pencil mode";
+            mode = c;
+            break;
+        case L'g':
+            s = "Go";
+            mode = c;
+            break;
+        }
+        window.changeMode(s);
+    }
+
     reverse_position(board, *y_player, *x_player, 1);
     refresh();
-    //mvwprintw(board, *y_player, *x_player, "P");
+//mvwprintw(board, *y_player, *x_player, "P");
     mvprintw(15, 40, "          ");
     mvprintw(16, 40, "          ");
     mvprintw(17, 40, "          ");
@@ -96,7 +147,7 @@ void use_input(
     mvprintw(20, 40, "          ");
     mvprintw(21, 40, "          ");
 
-    // Bewegung oder Aktion hat funktioniert
+// Bewegung oder Aktion hat funktioniert
     mvprintw(16, 40, "S:%d", success);
 
     mvprintw(15, 40, "K:%d", ch);
@@ -111,36 +162,52 @@ void use_input(
 }
 
 
-int move_up(int *y_player){
-    if (*y_player >= 3){
+int move_up(int *y_player)
+{
+    if (*y_player >= 3)
+    {
         *y_player -= 2;
         return 0;
-    }else{
+    }
+    else
+    {
         return -1;
     }
 }
 
-int move_down(int *y_player){
-    if (*y_player <= 15){
+int move_down(int *y_player)
+{
+    if (*y_player <= 15)
+    {
         *y_player += 2;
         return 0;
-    }else{
+    }
+    else
+    {
         return -1;
     }
 }
-int move_left(int *x_player){
-    if (*x_player >= 6){
+int move_left(int *x_player)
+{
+    if (*x_player >= 6)
+    {
         *x_player -= 4;
         return 0;
-    }else{
+    }
+    else
+    {
         return -1;
     }
 }
-int move_right(int *x_player){
-    if (*x_player <= 30){
+int move_right(int *x_player)
+{
+    if (*x_player <= 30)
+    {
         *x_player += 4;
         return 0;
-    }else{
+    }
+    else
+    {
         return -1;
     }
 }
@@ -148,8 +215,10 @@ int move_right(int *x_player){
 /**
  *  generieren einer neuen StatsStruct
 */
-struct Stats getStats(){
-    struct Stats stats = {
+struct Stats getStats()
+{
+    struct Stats stats =
+    {
         0,    // time_started
         0,    // time_elapsed
         0,    // mistakes
@@ -163,14 +232,17 @@ struct Stats getStats(){
 /**
  * Ändert bei val < 0 die Schwierigkeit runter und bei val > 0 hoch
  */
-void change_difficulty(struct Stats *stats, int val){
+void change_difficulty(struct Stats *stats, int val)
+{
     // Von high oder low in die mitte schalten
-    if ((strs_equal("LOW", stats->difficulty) && val > 0) || (strs_equal("HIGH", stats->difficulty) && val < 0)){
+    if ((strs_equal("LOW", stats->difficulty) && val > 0) || (strs_equal("HIGH", stats->difficulty) && val < 0))
+    {
         sprintf(stats->difficulty, "MED");
         return;
     }
     // Von Medium high oder runterschalten
-    if (strs_equal("MED", stats->difficulty)){
+    if (strs_equal("MED", stats->difficulty))
+    {
         if (val < 0)
             sprintf(stats->difficulty, "LOW");
 
@@ -182,10 +254,14 @@ void change_difficulty(struct Stats *stats, int val){
 /**
  *Verpacken der strcmpfunktion da diese sehr verwirrend ist
  */
-int strs_equal(char *str1, char *str2){
-    if (strcmp(str1, str2) == 0){
+int strs_equal(char *str1, char *str2)
+{
+    if (strcmp(str1, str2) == 0)
+    {
         return 1;
-    }else{
+    }
+    else
+    {
         return 0;
     }
 }

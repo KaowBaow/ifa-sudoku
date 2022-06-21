@@ -7,12 +7,14 @@
 #include "sudoku.h"
 
 
-int main(void){
+int main(void)
+{
     // Initialisierung der einzelnen fenster
     WINDOW * mainwin, * board, * stats_window, * menu_win;
 
     // Bei Error nach sterr schreiben und sicher abbrechen
-    if ((mainwin = initscr()) == NULL){
+    if ((mainwin = initscr()) == NULL)
+    {
         fprintf(stderr, "Fenster konte nicht gestartet werden.\n");
         exit_curses(1);
     }
@@ -32,18 +34,18 @@ int main(void){
     stats.time_started = time(NULL);
 
     print_menu(mainwin, &stats);
-    
+
     // Größe des Sudokufeldes
     int width = 37, height = 19;
 
-                // Sudoku-Feld
-                // Parent,  Höhe,   Weite, Y Offset, X Offset
+    // Sudoku-Feld
+    // Parent,  Höhe,   Weite, Y Offset, X Offset
     board = subwin(mainwin, height, width, 0,        0);
     // Mousesupport für board Aktivieren TODO funktioniert absolut nicht
     keypad(mainwin, TRUE);
     keypad(board, TRUE);
     //keypad(stats_window, TRUE);
-    
+
 
     // Status-Fenster rechts neben Feld
     stats_window = subwin(mainwin, 13, 9, 0, board->_maxx + 2);
@@ -62,7 +64,8 @@ int main(void){
     int y_player = 1;
     int x_player = 2;
     // Loop bis zum manuellen abbruch
-    while ((ch = getch()) != 'q'){
+    while ((ch = getch()) != 'q')
+    {
         // Etabliert pointer zu Koordinaten
         getyx(mainwin, y_curs, x_curs);
         // Abspeichern der Position
@@ -72,7 +75,11 @@ int main(void){
     }
 
     // Beenden des Programms
-    delwin(board); delwin(mainwin); endwin(); clear(); refresh();
+    delwin(board);
+    delwin(mainwin);
+    endwin();
+    clear();
+    refresh();
 
     return 0;
 }
