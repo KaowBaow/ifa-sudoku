@@ -1,10 +1,10 @@
 #include <time.h>
-#include <stdlib.h>
 #include <curses.h>
 #include <stdlib.h>
-#include <time.h>
 #include <string.h>
 
+
+// Stats
 struct Stats{
     time_t time_started;
     time_t time_elapes;
@@ -15,26 +15,34 @@ struct Stats{
     char difficulty[6];
     int fields[9][9];
 };
-
-void random_grid(int (*fields)[9]);
 struct Stats getStats();
 
+struct menu_choice{
+    char display[12];
+    int highlighted;
+};
+// Anzahl der Menuoptionen
+#define CHOICES 4
+int select_choice(struct menu_choice choices[CHOICES], struct Stats *stats);
+
+
+// Globale Display Funktionen
+void init_color_sceem();
+void print_welcome_screen();
+void print_timer(WINDOW * stats_win, int time_started);
+void print_menu(WINDOW* main_win, struct Stats *stats);
+void print_game(int fields[9][9], WINDOW * main_win, WINDOW * board_win, WINDOW * stats_win, struct Stats stats);
+void print_board(int fields[9][9], WINDOW * board_win);
+
+void random_grid(int (*fields)[9]);
 
 int strs_equal(char *str1, char *str2);
 
+void reverse_position(WINDOW *win, int y_position, int x_position, int direction);
 
-void use_input(int ch, WINDOW * mainwin, WINDOW * board, WINDOW * stats_win, int *y_player, int * x_player, struct Stats *stats);
-// Display
-void refresh_timer(WINDOW * stats_window, int time_started);
-void init_color_sceem();
-void reverse_position(WINDOW *window, int y_position, int x_position, int direction);
-//void debug(WINDOW * stats_window, char message[20]);
-void welcome_screen();
+void use_input(int ch, WINDOW * main_win, WINDOW * board_win, WINDOW * stats_win, int *y_player, int * x_player, struct Stats *stats);
+
 void index_to_position( int index_y, int index_x, int *position_y, int *position_x);
 void position_to_index(int position_y, int position_x, int *index_y, int *index_x);
-void print_mistakes(WINDOW *window, struct Stats);
-void print_board(int fields[9][9], WINDOW * field);
-void print_game(int fields[9][9], WINDOW * mainwin, WINDOW * board, WINDOW * stats_window, struct Stats stats);
-void print_menu(WINDOW* main_win, struct Stats *stats);
+
 void change_difficulty(struct Stats *stats, int val);
-void print_difficulty(WINDOW* stats_win, char difficulty[6]);

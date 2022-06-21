@@ -1,16 +1,14 @@
 #include "sudoku.h"
-#include <curses.h>
-#include <unistd.h>
-#include <string.h>
 
-// Länge der Menuoptionen
-#define CHOICES 4
+int strs_equal(char *str1, char *str2);
 
 // Private Funktionen
 void print_tips(WINDOW * stats_window, struct Stats stats);
 void print_lines(WINDOW * board, WINDOW * stats_window);
 void print_controls(WINDOW * window, int board_height);
 void print_stats(WINDOW * stats_window, struct Stats stats);
+void print_mistakes(WINDOW *win, struct Stats);
+void print_difficulty(WINDOW* stats_win, char difficulty[6]);
 
 /**
  * Startet Farbe
@@ -64,6 +62,7 @@ void index_to_position( int index_y, int index_x, int *position_y, int *position
     *position_x = (4 * (index_x + 1)) - 2;
     *position_y = (2 * (index_y)) + 1;
 }
+
 /**
  * Funktion zur ermittlung der Position der einzelnen Zahlen
  */
@@ -72,46 +71,44 @@ void position_to_index(int position_y, int position_x, int *index_y, int *index_
     *index_x = (position_x - 2) / 4;
 }
 
-
-
 /**
  * Malt die Linien des Sudokufeldes
  */
-void print_lines(WINDOW * board, WINDOW * stats_window){
+void print_lines(WINDOW * board_win, WINDOW * stats_win){
     // Erstellt einen Rahmen um die Input-Fenster
     // 2. und 3. Parameter zur angabe der Rand-Chars
-    box(board,0,0);
-    box(stats_window, 0, 0);
+    box(board_win,0,0);
+    box(stats_win, 0, 0);
     // Horizontale Linien
-    mvwhline(board, 6, 1, ACS_HLINE, 35);
-    mvwhline(board, 12, 1, ACS_HLINE, 35);
+    mvwhline(board_win, 6, 1, ACS_HLINE, 35);
+    mvwhline(board_win, 12, 1, ACS_HLINE, 35);
 
     // Vertikale Linien
-    mvwvline(board, 1, 12, ACS_VLINE, 17);
-    mvwvline(board, 1, 24, ACS_VLINE, 17);
+    mvwvline(board_win, 1, 12, ACS_VLINE, 17);
+    mvwvline(board_win, 1, 24, ACS_VLINE, 17);
 
 
     // obere Knotenpunkte
-    mvwaddch(board, 0, 12, ACS_TTEE);
-    mvwaddch(board, 0, 24, ACS_TTEE);
+    mvwaddch(board_win, 0, 12, ACS_TTEE);
+    mvwaddch(board_win, 0, 24, ACS_TTEE);
 
     //knotenpunkte links
-    mvwaddch(board, 6, 0, ACS_LTEE);
-    mvwaddch(board, 12, 0, ACS_LTEE);
+    mvwaddch(board_win, 6, 0, ACS_LTEE);
+    mvwaddch(board_win, 12, 0, ACS_LTEE);
 
     //knotenpunkte rechts
-    mvwaddch(board, 6, 36, ACS_RTEE);
-    mvwaddch(board, 12, 36, ACS_RTEE);
+    mvwaddch(board_win, 6, 36, ACS_RTEE);
+    mvwaddch(board_win, 12, 36, ACS_RTEE);
 
     // untere Knotenpunkte
-    mvwaddch(board, 18, 12, ACS_BTEE);
-    mvwaddch(board, 18, 24, ACS_BTEE);
+    mvwaddch(board_win, 18, 12, ACS_BTEE);
+    mvwaddch(board_win, 18, 24, ACS_BTEE);
 
     // Kreuzungen
-    mvwaddch(board, 6, 12, ACS_PLUS);
-    mvwaddch(board, 6, 24, ACS_PLUS);
-    mvwaddch(board, 12, 12, ACS_PLUS);
-    mvwaddch(board, 12, 24, ACS_PLUS);
+    mvwaddch(board_win, 6, 12, ACS_PLUS);
+    mvwaddch(board_win, 6, 24, ACS_PLUS);
+    mvwaddch(board_win, 12, 12, ACS_PLUS);
+    mvwaddch(board_win, 12, 24, ACS_PLUS);
 }
 
 /**
@@ -137,7 +134,7 @@ void print_controls(WINDOW * window,int board_height){
     mvwaddstr(window, first_line + 3, 2, "Leertaste - Speichern");
 }
 
-void refresh_timer(WINDOW *stats_window, int time_started){
+void print_timer(WINDOW *stats_window, int time_started){
     int time_now = time(NULL);
     int time_elapsed = time_now - time_started;
     int minutes = (int)(time_elapsed / 60);
@@ -162,7 +159,7 @@ void refresh_timer(WINDOW *stats_window, int time_started){
 void print_stats(WINDOW *stats_window, struct Stats stats){
     int h_align = 2;
     mvwaddstr(stats_window, 1, h_align, "Zeit");
-    refresh_timer(stats_window, stats.time_started);
+    print_timer(stats_window, stats.time_started);
 
     mvwaddstr(stats_window, 4, h_align, "Fehler");
     print_mistakes(stats_window, stats);
@@ -225,7 +222,7 @@ void reverse_position(WINDOW *window, int y_position, int x_position, int direct
     attroff(A_REVERSE);
 }
 
-void welcome_screen(){
+void print_welcome_screen(){
     mvprintw(1, 3," _____           _       _          \n");
     mvprintw(2, 3,"/  ___|         | |     | |         \n");
     mvprintw(3, 3,"\\ `--. _   _  __| | ___ | | ___   _ \n");
@@ -236,61 +233,6 @@ void welcome_screen(){
     getch();
     clear();
     //refresh();
-}
-
-struct menu_choice{
-    char display[12];
-    int highlighted;
-};
-
-
-/**
- * gibt zurück, welcher menu_choice ausgewählt wurde
- */
-int get_choice(struct menu_choice choices[CHOICES]){
-
-    int i;
-    for (i = 0; i < CHOICES; i++)
-        if (choices[i].highlighted)
-            return i;
-
-    return -1;
-}
-
-int select_choice(struct menu_choice choices[CHOICES], struct Stats *stats){
-    // Welcher Menu-Index wurde selected ?
-    int selected = get_choice(choices);
-    
-    int done = 0;
-    switch(selected){
-        // Start
-        case 0:
-            // Normaler starten in ein neues Spiel
-            random_grid(stats->fields);
-            done = 1;
-            break;
-        // Laden
-        case 1:
-            // TODO: Funktion zum Laden von Spielständen einbauen
-            done = 0;
-            break;
-
-        // LVL
-        case 2:
-            // Hier sollte eigentlich nichts großes passieren
-            done = 0;
-            break;
-        // Schließen
-        case 3:
-            // clean exit
-            exit(0);
-            done = 0;
-            break;
-        default:
-            // Error fall sollte eigentlich nicht auftreten
-            done = -1;
-    }
-    return done;
 }
 
 
@@ -420,5 +362,4 @@ void print_difficulty(WINDOW* stats_win, char difficulty[6]){
     wattroff(stats_win, COLOR_PAIR(2));
     wattroff(stats_win, COLOR_PAIR(3));
     wattroff(stats_win, COLOR_PAIR(4));
-
 }
