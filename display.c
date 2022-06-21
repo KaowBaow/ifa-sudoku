@@ -63,7 +63,7 @@ void print_board(int fields[9][9], WINDOW * field)
 }
 
 /**
- * Funktion zur ermittlung der Position der einzelnen Zahlen
+ * Funktion zur Ermittlung der Position der einzelnen Zahlen
  */
 void index_to_position( int index_y, int index_x, int *position_y, int *position_x)
 {
@@ -71,7 +71,7 @@ void index_to_position( int index_y, int index_x, int *position_y, int *position
     *position_y = (2 * (index_y)) + 1;
 }
 /**
- * Funktion zur ermittlung der Position der einzelnen Zahlen
+ * Funktion zur Ermittlung der Position der einzelnen Zahlen
  */
 void position_to_index(int position_y, int position_x, int *index_y, int *index_x)
 {
@@ -80,8 +80,7 @@ void position_to_index(int position_y, int position_x, int *index_y, int *index_
 }
 
 // input number
-void input_numbers(position_to_index(), ){
-position_to_index();
+void input_numbers(position_to_index(), index_to_position()){
 mvaddch(ch);
 
 }
@@ -297,7 +296,7 @@ int select_choice(struct menu_choice choices[CHOICES], struct Stats *stats)
     // Start
     case 0:
         // Normaler starten in ein neues Spiel
-        random_grid(stats->fields);
+        grid_normal(stats->fields);
         done = 1;
         break;
     // Laden
