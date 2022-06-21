@@ -56,7 +56,7 @@ int main(void)
     print_game(stats.fields, mainwin, board, stats_window, stats);
 
 
-    // Setzt Zeit, wie Lange gewrtet wird bis getch() -1 zurückgibt
+    // Setzt Zeit, wie Lange gewartet wird bis getch() -1 zurückgibt
     halfdelay(10);
 
     // Key-Input

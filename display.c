@@ -79,7 +79,12 @@ void position_to_index(int position_y, int position_x, int *index_y, int *index_
     *index_x = (position_x - 2) / 4;
 }
 
+// input number
+void input_numbers(position_to_index(), ){
+position_to_index();
+mvaddch(ch);
 
+}
 
 /**
  * Malt die Linien des Sudokufeldes
