@@ -7,7 +7,7 @@
 ## Anforgerungen
 * Anzeige des Gitters (muss)              [x]
 * Auswahl des aktuellen felds (muss)      [x]
-* abändern des Wertes (muss)              [ ]
+* abändern des Wertes (muss)              [x]
 * Sichere Verarbeitung der Eingabe (muss) [x]
 * auswählen eines Sudoku's (muss)         [ ]
 * richtiges sudoku erkennen (soll)        [ ]
