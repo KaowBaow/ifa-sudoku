@@ -89,6 +89,7 @@ void use_input(
         break;
     }
     reverse_position(board_win, *y_player, *x_player, 1);
+    print_affected(board_win, *y_player, *x_player);
     refresh();
     //mvwprintw(board, *y_player, *x_player, "P");
     mvprintw(15, 40, "          ");

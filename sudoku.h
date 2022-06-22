@@ -33,6 +33,7 @@ void print_timer(WINDOW * stats_win, int time_started);
 void print_menu(WINDOW* main_win, struct Stats *stats);
 void print_game(int fields[9][9], WINDOW * main_win, WINDOW * board_win, WINDOW * stats_win, struct Stats stats);
 void print_board(int fields[9][9], WINDOW * board_win);
+void print_affected(WINDOW* board_win, int index_y, int index_x);
 
 void random_grid(int (*fields)[9]);
 

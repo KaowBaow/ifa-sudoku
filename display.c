@@ -30,6 +30,8 @@ void init_color_sceem()
     init_pair(3, COLOR_YELLOW, COLOR_BLACK);
     // Altert
     init_pair(4, COLOR_RED, COLOR_BLACK);
+    // Affected
+    init_pair(5, COLOR_CYAN, COLOR_BLACK);
 }
 
 
@@ -396,4 +398,27 @@ void print_difficulty(WINDOW* stats_win, char difficulty[6])
     wattroff(stats_win, COLOR_PAIR(2));
     wattroff(stats_win, COLOR_PAIR(3));
     wattroff(stats_win, COLOR_PAIR(4));
+}
+
+/**
+ * Markiert alle Zahlen die nicht die Zahl an der aktuellen Position haben dürfen
+ */
+void print_affected(WINDOW* board_win, int index_y, int index_x){
+    int ch;
+    int position_y, position_x;
+    int y, x;
+    
+    for(y = 0; y < 9; ++y){
+        for(x = 0; x < 9; ++x){
+            index_to_position(y, x, &position_y, &position_x);
+            ch = mvinch(position_y, position_x);
+            if (y == index_y || x == index_x /* || in 9*9 */){
+                wattron(board_win, COLOR_PAIR(5));
+            }else{
+                wattroff(board_win, COLOR_PAIR(5));
+            }
+            mvwaddch(board_win, position_y, position_x, ch);
+        }
+    }
+    wattroff(board_win, COLOR_PAIR(5));
 }
