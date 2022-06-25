@@ -4,9 +4,9 @@
 #include <string.h>
 #include<unistd.h>
 //logic
+#define SIZE 9
 void sudokuErorr(char *s,int i,int j);
-void checkSudoku(int a[i][j]);
-int si,sj,flag;
+void checkSudoku(int a[SIZE][SIZE]);
 
 // Stats
 struct Stats{

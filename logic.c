@@ -8,8 +8,10 @@ void sudokuError(char *s,int i,int j)
     exit(0);
 }
 
-void checkSudoku(int a[i][j])
+void checkSudoku(int a[SIZE][SIZE])
 {
+    int i, j;
+    int si, sj, flag;
 
 
     /*
@@ -28,10 +30,10 @@ void checkSudoku(int a[i][j])
     Die selbe Logik kommt bei Spalten und den kleinen Quadraten zum einsatzt.
 
     */
-    for(i=0; i<9; i++)
+    for(i=0; i<SIZE; i++)
     {
         flag=0x0000;
-        for(j=0; j<9; j++)
+        for(j=0; j<SIZE; j++)
         {
             flag|=1<<(a[i][j]-1);
         }
@@ -45,10 +47,10 @@ void checkSudoku(int a[i][j])
     Prüfung von Spalten
     Das Flag steht für eine Spalte.
     */
-    for(j=0; j<9; j++)
+    for(j=0; j<SIZE; j++)
     {
         flag=0x0000;
-        for(i=0; i<9; i++)
+        for(i=0; i<SIZE; i++)
         {
             flag|=1<<(a[i][j]-1);
         }
