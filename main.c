@@ -39,19 +39,17 @@ int main(void)
     // Mousesupport für board_win Aktivieren TODO funktioniert absolut nicht
     keypad(main_win, TRUE);
     keypad(board_win, TRUE);
-    //keypad(stats_win, TRUE);
 
 
     // Status-Fenster rechts neben Feld
-    stats_win = subwin(main_win, 13, 9, 0, board_win->_maxx + 2);
+    stats_win = subwin(main_win, 13, 9, 0, 38);
 
 
     // Starten der Spieldarstellung
     print_game(stats.fields, main_win, board_win, stats_win, stats);
 
 
-    // Setzt Zeit, wie lange gewertet wird bis getch() -1 zurückgibt
-    // Setzt Zeit, wie lange gewertet wird bis getch() -1 zurückgibt
+    // Setzt Zeit, wie lange gewartet wird bis getch() -1 zurückgibt
     halfdelay(10); // 10 -> 1 Sekunde
 
     // Key-Input

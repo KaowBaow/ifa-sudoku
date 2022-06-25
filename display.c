@@ -5,7 +5,6 @@ void print_tips(WINDOW * stats_win, struct Stats stats);
 void print_lines(WINDOW * board_win, WINDOW * stats_win);
 void print_controls(WINDOW * win, int board_height);
 void print_stats(WINDOW * stats_win, struct Stats stats);
-void print_mistakes(WINDOW * win, struct Stats);
 void print_difficulty(WINDOW* stats_win, char difficulty[6]);
 
 /**
@@ -300,7 +299,7 @@ void print_options(WINDOW *win, struct Stats *stats)
 
             // Bei lvl muss der Schwierigkeitsgrad hinter
             if (strs_equal(choices[i].display, "LVL"))
-                mvwaddstr(win, y_pos, 10, stats->difficulty);
+                mvwaddstr(win, y_pos, 11, stats->difficulty);
 
             wattroff(win, A_REVERSE);
         }
@@ -378,7 +377,7 @@ void print_menu(WINDOW * main_win, struct Stats *stats)
     // Options loop
     print_options(menu_win, stats);
 
-    mvwaddstr(main_win, 5, 5, "TEST");
+    //mvwaddstr(main_win, 5, 5, "TEST");
     refresh();
 
     clear();
@@ -430,4 +429,43 @@ void print_affected(WINDOW* board_win, int index_y, int index_x){
     wattroff(board_win, COLOR_PAIR(5));
     wattroff(board_win, COLOR_PAIR(1));
     wrefresh(board_win);
+}
+
+void print_success(struct Stats stats){
+    clear();
+
+    mvaddstr(2, 3, " __     ______  _    _ ");
+    mvaddstr(3, 3, " \\ \\   / / __ \\| |  | |");
+    mvaddstr(4, 3, "  \\ \\_/ / |  | | |  | |");
+    mvaddstr(5, 3, "   \\   /| |  | | |  | |");
+    mvaddstr(6, 3, "    | | | |__| | |__| |");
+    mvaddstr(7, 3, " __ |_|  \\____/_\\____/   _ _ ");
+    mvaddstr(8, 3, " \\ \\        / / __ \\| \\ | | |");
+    mvaddstr(9, 3, "  \\ \\  /\\  / / |  | |  \\| | |");
+    mvaddstr(10, 3, "   \\ \\/  \\/ /| |  | | . ` | |");
+    mvaddstr(11, 3, "    \\  /\\  / | |__| | |\\  |_|");
+    mvaddstr(12, 3, "     \\/  \\/   \\____/|_| \\_(_)");
+    mvaddstr(13, 3, "Du hast es in ... geschafft");
+
+    refresh();
+    sleep(10);
+    exit(0);
+}
+
+void print_gameover(){
+    clear();
+    mvaddstr(2, 3, "   _____          __  __ ______ ");
+    mvaddstr(3, 3, "  / ____|   /\\   |  \\/  |  ____|");
+    mvaddstr(4, 3, " | |  __   /  \\  | \\  / | |__   ");
+    mvaddstr(5, 3, " | | |_ | / /\\ \\ | |\\/| |  __|  ");
+    mvaddstr(6, 3, " | |__| |/ ____ \\| |  | | |____ ");
+    mvaddstr(7, 3, "  \\_____/_/    \\_\\_|__|_|______|");
+    mvaddstr(8, 3, "  / __ \\ \\    / /  ____|  __ \\  ");
+    mvaddstr(9, 3, " | |  | \\ \\  / /| |__  | |__) | ");
+    mvaddstr(10, 3, " | |  | |\\ \\/ / |  __| |  _  /  ");
+    mvaddstr(11, 3, " | |__| | \\  /  | |____| | \\ \\  ");
+    mvaddstr(12, 3, "  \\____/   \\/   |______|_|  \\_\\ ");
+    refresh();
+    sleep(10);
+    exit(0);
 }
