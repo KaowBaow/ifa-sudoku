@@ -1,5 +1,5 @@
 #include <time.h>
-#include <curses.h>
+#include "lib/include/ncursesw/curses.h"
 #include <stdlib.h>
 #include <string.h>
 #include<unistd.h>
