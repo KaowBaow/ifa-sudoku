@@ -2,7 +2,11 @@
 #include <curses.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include<unistd.h>
+//logic
+void sudokuErorr(char *s,int i,int j);
+void checkSudoku(int a[i][j]);
+int si,sj,flag;
 
 // Stats
 struct Stats{
