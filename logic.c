@@ -1,17 +1,45 @@
 #include "sudoku.h"
 
 
-void sudokuError(char *s,int i,int j)
+void sudoku_error(WINDOW * board_win, char *type,int row,int col)
 {
-    printf("\n The sudoku is INCORRECT");
-    printf("\n in %s. Row:%d,Column:%d",s,i+1,j+1);
-    exit(0);
+    int i, pos_y, pos_x;
+    int ch;
+
+    wattron(board_win, COLOR_PAIR(4));
+
+    if (strs_equal("row", type)){
+        // über alle indexe der Reihe loopen
+        for(i = 0; i < SIZE; i++){
+            // position finden und char kriegen
+            index_to_position(row, i, &pos_y, &pos_x);
+            ch = mvwinch(board_win, pos_y, pos_x);
+            
+            // den char in rot wieder hin schreiben
+            mvwaddch(board_win, pos_y, pos_x, ch);
+
+        }
+    }else if(strs_equal("col", type)){
+        // über alle indexe der Spalte loopen
+        for(i = 0; i < SIZE; i++){
+            // position finden und char kriegen
+            index_to_position(col, i, &pos_y, &pos_x);
+            ch = mvwinch(board_win, pos_y, pos_x);
+            
+            // den char in rot wieder hin schreiben
+            mvwaddch(board_win, pos_y, pos_x, ch);
+
+        }
+    }
+    wattroff(board_win, COLOR_PAIR(2));
+    wrefresh(board_win);
 }
 
-int checkSudoku(int a[SIZE][SIZE])
+int check_sudoku(WINDOW * board_win, int a[SIZE][SIZE])
 {
     int i, j;
     int si, sj, flag;
+    int err = 0;
 
 
     /*
@@ -38,8 +66,8 @@ int checkSudoku(int a[SIZE][SIZE])
         }
         if(flag!=0x01FF)
         {
-            return -1;
-            sudokuError("row",i,j-1);
+            sudoku_error(board_win, "row",i,j-1);
+            err = -1;
         }
     }
 
@@ -56,8 +84,8 @@ int checkSudoku(int a[SIZE][SIZE])
         }
         if(flag!=0x01FF)
         {
-            return -1;
-            sudokuError("col",i-1,j);
+            sudoku_error(board_win, "col",i-1,j);
+            err = -1;
         }
     }
     /*
@@ -77,10 +105,10 @@ int checkSudoku(int a[SIZE][SIZE])
             }
             if(flag!=0x01FF)
             {
-                return -1;
-                sudokuError("square",si*3+i-1,sj*3+j-1);
+                sudoku_error(board_win, "square",si*3+i-1,sj*3+j-1);
+                err = -1;
             }
         }
     }
-    return 0;
+    return err;
 }

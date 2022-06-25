@@ -90,7 +90,7 @@ void use_input(
     case KEY_ENTER:
     case 10:
         // Bestätigen
-        valid = checkSudoku(stats->fields);
+        valid = check_sudoku(board_win, stats->fields);
         if (valid == -1){
             stats->mistakes++;
             if (stats->mistakes >= stats->max_mistakes){

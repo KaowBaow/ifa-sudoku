@@ -3,10 +3,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include<unistd.h>
+
 //logic
 #define SIZE 9
-void sudokuErorr(char *s,int i,int j);
-int checkSudoku(int a[SIZE][SIZE]);
+//void sudokuErorr(char *s,int i,int j);
+int check_sudoku(WINDOW * board_win, int a[SIZE][SIZE]);
 
 // Stats
 struct Stats{
