@@ -17,8 +17,8 @@ void random_grid(int (*fields)[9])
     {
         for(col = 0; col < 9; ++col)
         {
-            // Zufällige Zahl zwischen 1-9
-            fields[row][col] = (rand() % 9) + 1;
+            // Zufällige Zahl zwischen 0-9
+            fields[row][col] = (rand() % 10);
         }
     }
 }

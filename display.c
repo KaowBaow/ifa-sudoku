@@ -1,13 +1,11 @@
 #include "sudoku.h"
 
-int strs_equal(char *str1, char *str2);
-
 // Private Funktionen
-void print_tips(WINDOW * stats_window, struct Stats stats);
-void print_lines(WINDOW * board, WINDOW * stats_window);
-void print_controls(WINDOW * window, int board_height);
-void print_stats(WINDOW * stats_window, struct Stats stats);
-void print_mistakes(WINDOW *win, struct Stats);
+void print_tips(WINDOW * stats_win, struct Stats stats);
+void print_lines(WINDOW * board_win, WINDOW * stats_win);
+void print_controls(WINDOW * win, int board_height);
+void print_stats(WINDOW * stats_win, struct Stats stats);
+void print_mistakes(WINDOW * win, struct Stats);
 void print_difficulty(WINDOW* stats_win, char difficulty[6]);
 
 /**
@@ -23,7 +21,7 @@ void init_color_sceem()
     }
     start_color();
     // Normal
-    init_pair(1, COLOR_BLACK, COLOR_WHITE);
+    init_pair(1, COLOR_WHITE, COLOR_BLACK);
     // Good
     init_pair(2, COLOR_GREEN, COLOR_BLACK);
     // Warning
@@ -37,7 +35,6 @@ void init_color_sceem()
 
 /**
  * Funktion zum Aufzeichnen des Boards
- * @input int fields[9][9] Momentan noch ungenutzt
  * @field WINDOW * Das Sudoku Feld
  */
 void print_board(int fields[9][9], WINDOW * field)
@@ -51,13 +48,14 @@ void print_board(int fields[9][9], WINDOW * field)
     {
         for(index_x = 0; index_x < 9; ++index_x)
         {
-            //val = fields[index_x][index_y];
-            index_to_position(index_y, index_x, &position_y, &position_x);
-            sprintf(val, "%d", fields[index_x][index_y]);
+            // leere felder nicht dastellen
+            if (fields[index_x][index_y] != 0){
+                // findet die relevante position
+                index_to_position(index_y, index_x, &position_y, &position_x);
+                sprintf(val, "%d", fields[index_x][index_y]);
 
-
-            mvwaddstr(field, position_y, position_x, val);
-            //mvwaddstr(field, position_y, position_x, &fields[index_y][index_x]);
+                mvwaddstr(field, position_y, position_x, val);
+            }
         }
     }
 }
@@ -125,29 +123,29 @@ void print_lines(WINDOW * board_win, WINDOW * stats_win)
 /**
  * Erstellt Spiel View mit Sudoku Feld und Steuerungserklährung
  */
-void print_game(int fields[9][9], WINDOW * mainwin, WINDOW * board, WINDOW * stats_window, struct Stats stats)
+void print_game(int fields[9][9], WINDOW * mainwin, WINDOW * board, WINDOW * stats_win, struct Stats stats)
 {
 
-    print_lines(board, stats_window);
+    print_lines(board, stats_win);
     print_board(fields, board);
     print_controls(mainwin, 19);
 
-    print_stats(stats_window, stats);
+    print_stats(stats_win, stats);
 }
 
 /**
  * Schreibt ein Feld mit Controls
  */
-void print_controls(WINDOW * window,int board_height)
+void print_controls(WINDOW * win,int board_height)
 {
     int first_line = board_height + 1;
-    mvwaddstr(window, first_line, 2, "KEYPAD WASD oder Maus zum Auswaehlen der Felder");
-    mvwaddstr(window, first_line + 1, 2, "q - abbrechen");
-    mvwaddstr(window, first_line + 2, 2, "m - Menu");
-    mvwaddstr(window, first_line + 3, 2, "Leertaste - Speichern");
+    mvwaddstr(win, first_line, 2, "KEYPAD WASD oder Maus zum Auswaehlen der Felder");
+    mvwaddstr(win, first_line + 1, 2, "q - abbrechen");
+    mvwaddstr(win, first_line + 2, 2, "m - Menu");
+    mvwaddstr(win, first_line + 3, 2, "Leertaste - Speichern");
 }
 
-void print_timer(WINDOW *stats_window, int time_started)
+void print_timer(WINDOW *stats_win, int time_started)
 {
     int time_now = time(NULL);
     int time_elapsed = time_now - time_started;
@@ -157,33 +155,33 @@ void print_timer(WINDOW *stats_window, int time_started)
     // Wenn der Displaystring beim Umspringen auf eine neue Minute kleiner wird.
     // TODO: alternativ Sekunden immer 2-Stellig darstellen
     if (seconds == 0)
-        mvwaddstr(stats_window, 2, 2, "     ");
+        mvwaddstr(stats_win, 2, 2, "     ");
 
     // Erstellen und formatieren der anzuzeigenden Zeit
     char timer_display[22];
     sprintf(timer_display, "%d:%d", minutes, seconds);
-    mvwaddstr(stats_window, 2, 2, timer_display);
-    wrefresh(stats_window);
+    mvwaddstr(stats_win, 2, 2, timer_display);
+    wrefresh(stats_win);
 }
 
 /**
  * Zeigt den Status des Spiels
  * Refresht alle Module des Status Fensters
  */
-void print_stats(WINDOW *stats_window, struct Stats stats)
+void print_stats(WINDOW *stats_win, struct Stats stats)
 {
     int h_align = 2;
-    mvwaddstr(stats_window, 1, h_align, "Zeit");
-    print_timer(stats_window, stats.time_started);
+    mvwaddstr(stats_win, 1, h_align, "Zeit");
+    print_timer(stats_win, stats.time_started);
 
-    mvwaddstr(stats_window, 4, h_align, "Fehler");
-    print_mistakes(stats_window, stats);
+    mvwaddstr(stats_win, 4, h_align, "Fehler");
+    print_mistakes(stats_win, stats);
 
-    mvwaddstr(stats_window, 7, h_align, "Tips");
-    print_tips(stats_window, stats);
+    mvwaddstr(stats_win, 7, h_align, "Tips");
+    print_tips(stats_win, stats);
 
-    mvwaddstr(stats_window, 10, h_align, "LVL");
-    print_difficulty(stats_window, stats.difficulty);
+    mvwaddstr(stats_win, 10, h_align, "LVL");
+    print_difficulty(stats_win, stats.difficulty);
 }
 
 /**
@@ -191,7 +189,7 @@ void print_stats(WINDOW *stats_window, struct Stats stats)
  * TODO: Farbe funktioniert bis jetzt nicht
  * Im Board funktioniert sie...
  */
-void print_mistakes(WINDOW *window, struct Stats stats)
+void print_mistakes(WINDOW *win, struct Stats stats)
 {
     // Formatiert den zuzeigenden Status
     char str_mistakes[22];
@@ -200,41 +198,41 @@ void print_mistakes(WINDOW *window, struct Stats stats)
     // noch keine Fehler
     if(stats.mistakes == 0)
     {
-        wattron(window, COLOR_PAIR(2)); // grün
+        wattron(win, COLOR_PAIR(2)); // grün
 
         // noch mehr als ein Fehler übrig
     }
     else if (stats.mistakes >= stats.max_mistakes - 1)
     {
-        wattron(window, COLOR_PAIR(4)); // gelb
+        wattron(win, COLOR_PAIR(4)); // gelb
 
         // gleich vorbei
     }
     else
     {
-        wattron(window, COLOR_PAIR(3)); // rot
+        wattron(win, COLOR_PAIR(3)); // rot
     }
 
     int offset_y = 5,
         offset_x = 2;
 
     // Tatsächliches schreiben der Fehler
-    mvwprintw(window, offset_y, offset_x, "%s", str_mistakes);
+    mvwprintw(win, offset_y, offset_x, "%s", str_mistakes);
     // wieder auf normale Farbe schalten
-    wattroff(window, COLOR_PAIR(2));
-    wattroff(window, COLOR_PAIR(3));
-    wattroff(window, COLOR_PAIR(4));
+    wattroff(win, COLOR_PAIR(2));
+    wattroff(win, COLOR_PAIR(3));
+    wattroff(win, COLOR_PAIR(4));
 }
 
-void print_tips(WINDOW *window, struct Stats stats)
+void print_tips(WINDOW *win, struct Stats stats)
 {
-    mvwprintw(window, 8, 2, "%d", stats.available_tips);
+    mvwprintw(win, 8, 2, "%d", stats.available_tips);
 }
 
 /**
  * Stellt das ausgewählte Feld auf negativ
  */
-void reverse_position(WINDOW *window, int y_position, int x_position, int direction)
+void reverse_position(WINDOW *win, int y_position, int x_position, int direction)
 {
     int ch;
     ch = mvinch(y_position, x_position);
@@ -293,21 +291,25 @@ void print_options(WINDOW *win, struct Stats *stats)
         box(win, 0, 0);
         for (i = 0; i < CHOICES; i++)
         {
+            // vertikale Position des Eintrags errechnen
             y_pos = 2 + (2 * i);
             if (choices[i].highlighted)
                 wattron(win, A_REVERSE);
 
-            mvwaddstr(win, y_pos, 5, choices[i].display);
+            mvwaddstr(win, y_pos, 7, choices[i].display);
 
             // Bei lvl muss der Schwierigkeitsgrad hinter
             if (strs_equal(choices[i].display, "LVL"))
-                mvwaddstr(win, y_pos, 9, stats->difficulty);
+                mvwaddstr(win, y_pos, 10, stats->difficulty);
 
             wattroff(win, A_REVERSE);
         }
+        /*
+         * Debugging
         mvwprintw(win, 10, 5, "%d", c_pos);
         mvwprintw(win, 12, 5, "%d", ch);
         mvwprintw(win, 14, 5, "%d", done);
+        */
 
         // auf input warten
         ch = getch();
@@ -382,6 +384,9 @@ void print_menu(WINDOW * main_win, struct Stats *stats)
     clear();
 }
 
+/*
+ * Stellt den Schwierigkeitsgrad da
+ */
 void print_difficulty(WINDOW* stats_win, char difficulty[6])
 {
     if (strs_equal(difficulty, "LOW"))
@@ -411,14 +416,18 @@ void print_affected(WINDOW* board_win, int index_y, int index_x){
     for(y = 0; y < 9; ++y){
         for(x = 0; x < 9; ++x){
             index_to_position(y, x, &position_y, &position_x);
-            ch = mvinch(position_y, position_x);
+            ch = mvwinch(board_win, position_y, position_x);
             if (y == index_y || x == index_x /* || in 9*9 */){
+                wattroff(board_win, COLOR_PAIR(1));
                 wattron(board_win, COLOR_PAIR(5));
             }else{
                 wattroff(board_win, COLOR_PAIR(5));
+                wattron(board_win, COLOR_PAIR(1));
             }
             mvwaddch(board_win, position_y, position_x, ch);
         }
     }
     wattroff(board_win, COLOR_PAIR(5));
+    wattroff(board_win, COLOR_PAIR(1));
+    wrefresh(board_win);
 }

@@ -16,6 +16,8 @@ void use_input(
     int *y_player, int *x_player, struct Stats *stats
 )
 {
+    // TODO: success wird gerade tatsächlich nicht ausgewertet... 
+    // entweder eine Art feedback dastellen oder entfernen
     int success;
     int index_y;
     int index_x;
@@ -79,6 +81,7 @@ void use_input(
     case '9':
         position_to_index(*y_player, *x_player, &index_y, &index_x);
         success = change_field(index_y, index_x, ch, stats);
+        // TODO: testen ob korrekt
         print_board(stats->fields, board_win);
         wrefresh(board_win);
         break;
@@ -89,8 +92,11 @@ void use_input(
         break;
     }
     reverse_position(board_win, *y_player, *x_player, 1);
-    print_affected(board_win, *y_player, *x_player);
+    position_to_index(*y_player, *x_player, &index_y, &index_x);
+    //print_affected(board_win, index_y, index_x);
     refresh();
+    /*
+     * Debugging
     //mvwprintw(board, *y_player, *x_player, "P");
     mvprintw(15, 40, "          ");
     mvprintw(16, 40, "          ");
@@ -111,6 +117,7 @@ void use_input(
 
     mvprintw(17, 45, "Yi:%d", index_y);
     mvprintw(18, 45, "Xi:%d", index_x);
+    */
 }
 
 int move_up(int *y_player)
@@ -181,6 +188,10 @@ int get_choice(struct menu_choice choices[CHOICES])
     return -1;
 }
 
+/*
+ * Wählt eines der Menufelder aus
+ * Der eintrag der highlighted ist wird ausgewählt
+ */
 int select_choice(struct menu_choice choices[CHOICES], struct Stats *stats)
 {
     // Welcher Menu-Index wurde selected ?

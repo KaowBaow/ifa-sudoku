@@ -4,7 +4,7 @@
 int main(void)
 {
     // Initialisierung der einzelnen Fenster
-    WINDOW * main_win, * board_win, * stats_win, * menu_win;
+    WINDOW * main_win, * board_win, * stats_win;
 
     // Bei Error nach sterr schreiben und sicher abbrechen
     if ((main_win = initscr()) == NULL)
