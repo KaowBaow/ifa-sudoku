@@ -138,10 +138,10 @@ void print_lines(WINDOW * board_win, WINDOW * stats_win)
 void print_controls(WINDOW * win,int board_height)
 {
     int first_line = board_height + 1;
-    mvwaddstr(win, first_line, 2, "WASD zum Auswaehlen der Felder");
-    mvwaddstr(win, first_line + 1, 2, "q - abbrechen");
-    mvwaddstr(win, first_line + 2, 2, "m - Menu");
-    mvwaddstr(win, first_line + 3, 2, "Enter - Überprüfen");
+    mvwaddstr(win, first_line, 2,     "wasd  => Auswaehlen");
+    mvwaddstr(win, first_line + 1, 2, "q     => Abbrechen");
+    mvwaddstr(win, first_line + 2, 2, "m     => Menu");
+    mvwaddstr(win, first_line + 3, 2, "Enter => Check");
 }
 
 /*

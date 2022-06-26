@@ -241,6 +241,9 @@ int select_choice(struct menu_choice choices[CHOICES], struct Stats *stats)
     case 0:
         // Normaler starten in ein neues Spiel
         get_difficulty(stats);
+        // stats zurücksetzen
+        stats->time_started = time(NULL);
+        stats->mistakes = 0;
         done = 1;
         break;
     // Laden
