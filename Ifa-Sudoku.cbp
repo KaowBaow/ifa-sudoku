@@ -64,7 +64,7 @@
 			<Add library="lib/lib/libncursesw.dll.a" />
 			<Add library="lib/lib/libpanelw.a" />
 			<Add library="lib/lib/libpanelw.dll.a" />
-			<Add directory="lib/lib" />
+			<Add directory="lib/bin" />
 		</Linker>
 		<Unit filename="Ifa-Sudoku.cbp" />
 		<Unit filename="LICENSE" />
