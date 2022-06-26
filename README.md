@@ -1,9 +1,5 @@
 # ifa-sudoku
 
-* Funktionen
-  - Darstellung Des Grids(es kann einfach eine Char-Matrix eingesetzt werden)
-  - Input Loop für Cursertasten Mouse-Klicks und Zahlen ist gegeben
-
 ## Anforgerungen
 * Anzeige des Gitters (muss)              [x]
 * Auswahl des aktuellen felds (muss)      [x]

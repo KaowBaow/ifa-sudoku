@@ -38,6 +38,7 @@ void get_difficulty(struct Stats *stats)
         */
         fill_fields(stats, fields);
     }else if(strs_equal(stats->difficulty, "MED")){
+        // Mittlerres Sudoku
         int fields[SIZE * SIZE] = {
             3, 0, 0, 5, 0, 0, 9, 0, 8,
             0, 9, 2, 0, 4, 8, 0, 3, 0,
@@ -51,6 +52,7 @@ void get_difficulty(struct Stats *stats)
         };
         fill_fields(stats, fields);
     }else if(strs_equal(stats->difficulty, "HIGH")){
+        // Schweeres Sudoku
         int fields[SIZE * SIZE] = {
             6, 0, 0, 0, 1, 9, 7, 0, 0,
             0, 0, 0, 0, 0, 0, 2, 0, 0,
@@ -69,13 +71,15 @@ void get_difficulty(struct Stats *stats)
 }
 
 /*
- * Beschreibt
+ * Lädt ein neues Sudoku in stats
  */
 void fill_fields(struct Stats *stats, int fields[SIZE * SIZE]){
     int i = 0, y, x;
     for (y = 0; y < SIZE; y++){
         for (x = 0; x < SIZE; x++){
+            // die property die bearbeitet werden kann
             stats->fields[x][y] = fields[i];
+            // die ursprüngliche property
             stats->starting_fields[x][y] = fields[i];
             i++;
         }

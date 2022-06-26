@@ -2,14 +2,18 @@
 #include <stdlib.h>
 
 // Private Funktionen
+int change_field(int index_y, int index_x, int ch, struct Stats *stats);
+int char_to_num(int ch);
+// bewegungen
 int move_up(int *y_player);
 int move_down(int *y_player);
 int move_left(int *x_player);
 int move_right(int *x_player);
 
-int change_field(int index_y, int index_x, int ch, struct Stats *stats);
-int char_to_num(int ch);
 
+/*
+ * wird 1 Mal die Sekunde aufgerufen und modifiziert Fenster und stats je nach input
+ */
 void use_input(
     int ch,
     WINDOW * main_win, WINDOW * board_win, WINDOW * stats_win,
@@ -63,6 +67,7 @@ void use_input(
 
     case 't':
         //Tipp
+        // TODO: einbauen
         success = -1;
         break;
 
@@ -112,29 +117,6 @@ void use_input(
     position_to_index(*y_player, *x_player, &index_y, &index_x);
     //print_affected(board_win, index_y, index_x);
     refresh();
-    /*
-     * Debugging
-    //mvwprintw(board, *y_player, *x_player, "P");
-    mvprintw(16, 40, "          ");
-    mvprintw(17, 40, "          ");
-    mvprintw(18, 40, "          ");
-    mvprintw(20, 40, "          ");
-    mvprintw(21, 40, "          ");
-    mvprintw(15, 40, "          ");
-    mvprintw(15, 40, "K:%d", ch);
-
-    // Bewegung oder Aktion hat funktioniert
-    mvprintw(16, 40, "S:%d", success);
-
-    mvprintw(17, 40, "Y:%d", *y_player);
-    mvprintw(18, 40, "X:%d", *x_player);
-
-    //int index_y, index_x;
-    position_to_index(*y_player, *x_player, &index_y, &index_x);
-
-    mvprintw(17, 45, "Yi:%d", index_y);
-    mvprintw(18, 45, "Xi:%d", index_x);
-    */
 }
 
 /*
@@ -192,7 +174,32 @@ int move_right(int *x_player)
     }
 }
 
+/*
+ * Ändert ein Feld ab
+ */
+int change_field(int index_y, int index_x, int ch, struct Stats *stats)
+{
+    int val = char_to_num(ch);
 
+    // Nur wenn das Feld ursprünglich nicht gefüllt war änderbar
+    if (stats->starting_fields[index_x][index_y] == 0){
+        stats->fields[index_x][index_y] = val;
+        return 0;
+    }else
+        // Falls nicht modifizierbar
+        return -1;
+
+}
+
+/*
+ * Konvertiert ein Char-value zu der jeweiligen Nummer
+ */
+int char_to_num(int ch)
+{
+    return ch - 48;
+}
+
+/* ========== MENU =========================================== */
 
 /**
  * gibt zurück, welcher menu_choice ausgewählt wurde
@@ -223,7 +230,6 @@ int select_choice(struct menu_choice choices[CHOICES], struct Stats *stats)
     // Start
     case 0:
         // Normaler starten in ein neues Spiel
-        //random_grid(stats->fields);
         get_difficulty(stats);
         done = 1;
         break;
@@ -235,14 +241,13 @@ int select_choice(struct menu_choice choices[CHOICES], struct Stats *stats)
 
     // LVL
     case 2:
-        // Hier sollte eigentlich nichts großes passieren
+        // Hier sollte eigentlich nichts großes passieren da die schwierigkeit mit a & d gesteuert wrid
         done = 0;
         break;
     // Schließen
     case 3:
         // clean exit
         exit(0);
-        done = 0;
         break;
     default:
         // Error fall sollte eigentlich nicht auftreten
@@ -251,26 +256,3 @@ int select_choice(struct menu_choice choices[CHOICES], struct Stats *stats)
     return done;
 }
 
-/*
- * Ändert ein Feld ab
- */
-int change_field(int index_y, int index_x, int ch, struct Stats *stats)
-{
-    int val = char_to_num(ch);
-
-    // Nur wenn das Feld ursprünglich nicht gefüllt war änderbar
-    if (stats->starting_fields[index_x][index_y] == 0){
-        stats->fields[index_x][index_y] = val;
-        return 0;
-    }else
-        return -1;
-
-}
-
-/*
- * Konvertiert ein Char-value zu der jeweiligen Nummer
- */
-int char_to_num(int ch)
-{
-    return ch - 48;
-}

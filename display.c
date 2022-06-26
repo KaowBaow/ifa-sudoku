@@ -8,6 +8,24 @@ void print_stats(WINDOW * stats_win, struct Stats stats);
 void print_difficulty(WINDOW* stats_win, char difficulty[6]);
 
 /**
+ * Funktion zur Ermittlung der Position der einzelnen Zahlen
+ */
+void index_to_position( int index_y, int index_x, int *position_y, int *position_x)
+{
+    *position_x = (4 * (index_x + 1)) - 2;
+    *position_y = (2 * (index_y)) + 1;
+}
+
+/**
+ * Funktion zur Ermittlung der Position der einzelnen Zahlen
+ */
+void position_to_index(int position_y, int position_x, int *index_y, int *index_x)
+{
+    *index_y = (position_y - 1) / 2;
+    *index_x = (position_x - 2) / 4;
+}
+
+/**
  * Startet Farbe
  * Definiert verschiedene Color Szenarien
  */
@@ -29,6 +47,17 @@ void init_color_sceem()
     init_pair(4, COLOR_RED, COLOR_BLACK);
     // Affected
     init_pair(5, COLOR_CYAN, COLOR_BLACK);
+}
+
+/**
+ * Erstellt Spiel View mit Sudoku Feld und Steuerungserklährung
+ */
+void print_game(int fields[9][9], WINDOW * mainwin, WINDOW * board, WINDOW * stats_win, struct Stats stats)
+{
+    print_lines(board, stats_win);
+    print_board(fields, board);
+    print_controls(mainwin, 19);
+    print_stats(stats_win, stats);
 }
 
 
@@ -59,23 +88,6 @@ void print_board(int fields[9][9], WINDOW * field)
     }
 }
 
-/**
- * Funktion zur Ermittlung der Position der einzelnen Zahlen
- */
-void index_to_position( int index_y, int index_x, int *position_y, int *position_x)
-{
-    *position_x = (4 * (index_x + 1)) - 2;
-    *position_y = (2 * (index_y)) + 1;
-}
-
-/**
- * Funktion zur Ermittlung der Position der einzelnen Zahlen
- */
-void position_to_index(int position_y, int position_x, int *index_y, int *index_x)
-{
-    *index_y = (position_y - 1) / 2;
-    *index_x = (position_x - 2) / 4;
-}
 
 /**
  * Malt die Linien des Sudokufeldes
@@ -119,18 +131,6 @@ void print_lines(WINDOW * board_win, WINDOW * stats_win)
     mvwaddch(board_win, 12, 24, ACS_PLUS);
 }
 
-/**
- * Erstellt Spiel View mit Sudoku Feld und Steuerungserklährung
- */
-void print_game(int fields[9][9], WINDOW * mainwin, WINDOW * board, WINDOW * stats_win, struct Stats stats)
-{
-
-    print_lines(board, stats_win);
-    print_board(fields, board);
-    print_controls(mainwin, 19);
-
-    print_stats(stats_win, stats);
-}
 
 /**
  * Schreibt ein Feld mit Controls
@@ -138,12 +138,15 @@ void print_game(int fields[9][9], WINDOW * mainwin, WINDOW * board, WINDOW * sta
 void print_controls(WINDOW * win,int board_height)
 {
     int first_line = board_height + 1;
-    mvwaddstr(win, first_line, 2, "KEYPAD WASD oder Maus zum Auswaehlen der Felder");
+    mvwaddstr(win, first_line, 2, "WASD zum Auswaehlen der Felder");
     mvwaddstr(win, first_line + 1, 2, "q - abbrechen");
     mvwaddstr(win, first_line + 2, 2, "m - Menu");
-    mvwaddstr(win, first_line + 3, 2, "Leertaste - Speichern");
+    mvwaddstr(win, first_line + 3, 2, "Enter - Überprüfen");
 }
 
+/*
+ * Schreibt einen Timer
+ */
 void print_timer(WINDOW *stats_win, int time_started)
 {
     int time_now = time(NULL);
@@ -185,8 +188,6 @@ void print_stats(WINDOW *stats_win, struct Stats stats)
 
 /**
  * Zeigt, wie viele Fehler bereits gemacht wurden
- * TODO: Farbe funktioniert bis jetzt nicht
- * Im Board funktioniert sie...
  */
 void print_mistakes(WINDOW *win, struct Stats stats)
 {
@@ -223,9 +224,34 @@ void print_mistakes(WINDOW *win, struct Stats stats)
     wattroff(win, COLOR_PAIR(4));
 }
 
+/*
+ * Zeigt an wie viele Tips noch zur verfügung stehen
+ * TODO: Bis jetzt leider keine Impolementation
+ */
 void print_tips(WINDOW *win, struct Stats stats)
 {
     mvwprintw(win, 8, 2, "%d", stats.available_tips);
+}
+
+/*
+ * Stellt den Schwierigkeitsgrad da
+ */
+void print_difficulty(WINDOW* stats_win, char difficulty[6])
+{
+    if (strs_equal(difficulty, "LOW"))
+        wattron(stats_win, COLOR_PAIR(2));
+
+    else if (strs_equal(difficulty, "MED"))
+        wattron(stats_win, COLOR_PAIR(3));
+
+    else if (strs_equal(difficulty, "HIGH"))
+        wattron(stats_win, COLOR_PAIR(4));
+
+    mvwaddstr(stats_win, 11, 2, difficulty);
+
+    wattroff(stats_win, COLOR_PAIR(2));
+    wattroff(stats_win, COLOR_PAIR(3));
+    wattroff(stats_win, COLOR_PAIR(4));
 }
 
 /**
@@ -243,22 +269,7 @@ void reverse_position(WINDOW *win, int y_position, int x_position, int direction
     attroff(A_REVERSE);
 }
 
-void print_welcome_screen()
-{
-    mvprintw(1, 3," _____           _       _          \n");
-    mvprintw(2, 3,"/  ___|         | |     | |         \n");
-    mvprintw(3, 3,"\\ `--. _   _  __| | ___ | | ___   _ \n");
-    mvprintw(4, 3," `--. \\ | | |/ _` |/ _ \\| |/ / | | |\n");
-    mvprintw(5, 3,"/\\__/ / |_| | (_| | (_) |   <| |_| |\n");
-    mvprintw(6, 3,"\\____/ \\__,_|\\__,_|\\___/|_|\\_\\\\__,_|");
-    mvprintw(8, 7, " Beliebige Taste druecken");
-    getch();
-    clear();
-    //refresh();
-}
-
-
-/**
+/* ====== MENU ===================================================
  * Darstellung der Menuoptionen
  * TODO: Sollte es noch mehr Choices geben?
  */
@@ -362,9 +373,7 @@ void print_options(WINDOW *win, struct Stats *stats)
 
     }
     while(done != 1);
-
 }
-
 
 /**
  * Darstellung des Menus
@@ -383,29 +392,12 @@ void print_menu(WINDOW * main_win, struct Stats *stats)
     clear();
 }
 
-/*
- * Stellt den Schwierigkeitsgrad da
- */
-void print_difficulty(WINDOW* stats_win, char difficulty[6])
-{
-    if (strs_equal(difficulty, "LOW"))
-        wattron(stats_win, COLOR_PAIR(2));
 
-    else if (strs_equal(difficulty, "MED"))
-        wattron(stats_win, COLOR_PAIR(3));
-
-    else if (strs_equal(difficulty, "HIGH"))
-        wattron(stats_win, COLOR_PAIR(4));
-
-    mvwaddstr(stats_win, 11, 2, difficulty);
-
-    wattroff(stats_win, COLOR_PAIR(2));
-    wattroff(stats_win, COLOR_PAIR(3));
-    wattroff(stats_win, COLOR_PAIR(4));
-}
+// ==================== MENU Ende ===================================================
 
 /**
  * Markiert alle Zahlen die nicht die Zahl an der aktuellen Position haben dürfen
+ * TODO unbenutzt und nicht funktionstüchtig
  */
 void print_affected(WINDOW* board_win, int index_y, int index_x){
     int ch;
@@ -431,6 +423,7 @@ void print_affected(WINDOW* board_win, int index_y, int index_x){
     wrefresh(board_win);
 }
 
+// =============== Statische Screens ===============================
 void print_success(struct Stats stats){
     clear();
 
@@ -468,4 +461,18 @@ void print_gameover(){
     refresh();
     sleep(10);
     exit(0);
+}
+
+void print_welcome_screen()
+{
+    mvprintw(1, 3," _____           _       _          \n");
+    mvprintw(2, 3,"/  ___|         | |     | |         \n");
+    mvprintw(3, 3,"\\ `--. _   _  __| | ___ | | ___   _ \n");
+    mvprintw(4, 3," `--. \\ | | |/ _` |/ _ \\| |/ / | | |\n");
+    mvprintw(5, 3,"/\\__/ / |_| | (_| | (_) |   <| |_| |\n");
+    mvprintw(6, 3,"\\____/ \\__,_|\\__,_|\\___/|_|\\_\\\\__,_|");
+    mvprintw(8, 7, " Beliebige Taste druecken");
+    getch();
+    clear();
+    //refresh();
 }

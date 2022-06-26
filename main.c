@@ -40,7 +40,6 @@ int main(void)
     keypad(main_win, TRUE);
     keypad(board_win, TRUE);
 
-
     // Status-Fenster rechts neben Feld
     stats_win = subwin(main_win, 13, 9, 0, 38);
 

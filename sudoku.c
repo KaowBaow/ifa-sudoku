@@ -1,8 +1,8 @@
 #include "sudoku.h"
 
-
 /**
  * Füllt das Feld volkommen Random
+ * TODO: war nur für Mockinggründe und wird eigentlich nicht mehr benutzt
  */
 void random_grid(int (*fields)[9])
 {
