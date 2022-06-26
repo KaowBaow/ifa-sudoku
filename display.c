@@ -77,7 +77,8 @@ void print_board(int fields[9][9], WINDOW * field)
         for(index_x = 0; index_x < 9; ++index_x)
         {
             // leere felder nicht dastellen
-            if (fields[index_x][index_y] != 0){
+            if (fields[index_x][index_y] != 0)
+            {
                 // findet die relevante position
                 index_to_position(index_y, index_x, &position_y, &position_x);
                 sprintf(val, "%d", fields[index_x][index_y]);
@@ -399,19 +400,25 @@ void print_menu(WINDOW * main_win, struct Stats *stats)
  * Markiert alle Zahlen die nicht die Zahl an der aktuellen Position haben dürfen
  * TODO unbenutzt und nicht funktionstüchtig
  */
-void print_affected(WINDOW* board_win, int index_y, int index_x){
+void print_affected(WINDOW* board_win, int index_y, int index_x)
+{
     int ch;
     int position_y, position_x;
     int y, x;
-    
-    for(y = 0; y < 9; ++y){
-        for(x = 0; x < 9; ++x){
+
+    for(y = 0; y < 9; ++y)
+    {
+        for(x = 0; x < 9; ++x)
+        {
             index_to_position(y, x, &position_y, &position_x);
             ch = mvwinch(board_win, position_y, position_x);
-            if (y == index_y || x == index_x /* || in 9*9 */){
+            if (y == index_y || x == index_x /* || in 9*9 */)
+            {
                 wattroff(board_win, COLOR_PAIR(1));
                 wattron(board_win, COLOR_PAIR(5));
-            }else{
+            }
+            else
+            {
                 wattroff(board_win, COLOR_PAIR(5));
                 wattron(board_win, COLOR_PAIR(1));
             }
@@ -423,8 +430,8 @@ void print_affected(WINDOW* board_win, int index_y, int index_x){
     wrefresh(board_win);
 }
 
-// =============== Statische Screens ===============================
-void print_success(struct Stats stats){
+void print_success(struct Stats stats)
+{
     clear();
 
     mvaddstr(2, 3, " __     ______  _    _ ");
@@ -445,7 +452,8 @@ void print_success(struct Stats stats){
     exit(0);
 }
 
-void print_gameover(){
+void print_gameover()
+{
     clear();
     mvaddstr(2, 3, "   _____          __  __ ______ ");
     mvaddstr(3, 3, "  / ____|   /\\   |  \\/  |  ____|");

@@ -1,43 +1,52 @@
 #include "sudoku.h"
 
-void mark_index(WINDOW * board_win, int index_y, int index_x){
+void mark_index(WINDOW * board_win, int index_y, int index_x)
+{
     int pos_y, pos_x, ch;
     // position finden
     index_to_position(index_y, index_x, &pos_y, &pos_x);
 
     // char finden
     ch = mvwinch(board_win, pos_y, pos_x);
-    
+
     // den char in rot wieder hin schreiben
     mvwaddch(board_win, pos_y, pos_x, ch);
 }
 
 void sudoku_error(WINDOW * board_win, char *type,int row,int col)
 {
-    int i, pos_y, pos_x;
-    int ch;
+    int i;
     int square_y, square_x, y, x;
 
     wattron(board_win, COLOR_PAIR(4));
 
-    if (strs_equal("row", type)){
+    if (strs_equal("row", type))
+    {
         // über alle indexe der Reihe loopen
-        for(i = 0; i < SIZE; i++){
+        for(i = 0; i < SIZE; i++)
+        {
             //mark_index(board_win, row, i);
             mark_index(board_win, row, i);
         }
-    }else if(strs_equal("col", type)){
+    }
+    else if(strs_equal("col", type))
+    {
         // über alle indexe der Spalte loopen
-        for(i = 0; i < SIZE; i++){
+        for(i = 0; i < SIZE; i++)
+        {
             mark_index(board_win, i, col);
         }
-    }else if(strs_equal("square", type)){
+    }
+    else if(strs_equal("square", type))
+    {
         // indexe des ersten felds des vierecks
         square_y = (int)(row / 3);
         square_x = (int)(col / 3);
 
-        for (y = square_y; y < square_y + 3; y++){
-            for (x = square_x; x < square_x + 3; x++){
+        for (y = square_y; y < square_y + 3; y++)
+        {
+            for (x = square_x; x < square_x + 3; x++)
+            {
                 mark_index(board_win, y, x);
             }
         }

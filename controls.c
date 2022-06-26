@@ -20,7 +20,7 @@ void use_input(
     int *y_player, int *x_player, struct Stats *stats
 )
 {
-    // TODO: success wird gerade tatsächlich nicht ausgewertet... 
+    // TODO: success wird gerade tatsächlich nicht ausgewertet...
     // entweder eine Art feedback dastellen oder entfernen
     int success;
     int index_y;
@@ -96,14 +96,20 @@ void use_input(
     case 10:
         // Bestätigen
         valid = check_sudoku(board_win, stats->fields);
-        if (valid == -1){
+        if (valid == -1)
+        {
             stats->mistakes++;
-            if (stats->mistakes >= stats->max_mistakes){
+            if (stats->mistakes >= stats->max_mistakes)
+            {
                 print_gameover();
-            }else{
+            }
+            else
+            {
                 print_mistakes(stats_win, *stats);
             }
-        }else{
+        }
+        else
+        {
             print_success(*stats);
         }
         break;
