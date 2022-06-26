@@ -56,6 +56,14 @@
 			<Add directory="lib/include" />
 		</Compiler>
 		<Linker>
+			<Add library="lib/lib/libformw.a" />
+			<Add library="lib/lib/libformw.dll.a" />
+			<Add library="lib/lib/libmenuw.a" />
+			<Add library="lib/lib/libmenuw.dll.a" />
+			<Add library="lib/lib/libncursesw.a" />
+			<Add library="lib/lib/libncursesw.dll.a" />
+			<Add library="lib/lib/libpanelw.a" />
+			<Add library="lib/lib/libpanelw.dll.a" />
 			<Add directory="lib/lib" />
 		</Linker>
 		<Unit filename="Ifa-Sudoku.cbp" />
