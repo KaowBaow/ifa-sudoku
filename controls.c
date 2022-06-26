@@ -21,6 +21,7 @@ void use_input(
     int success;
     int index_y;
     int index_x;
+    int valid;
 
     // Das Highlighting an der Selektierten Stelle entfernen
     reverse_position(board_win, *y_player, *x_player, 0);
@@ -86,6 +87,22 @@ void use_input(
         wrefresh(board_win);
         break;
 
+    case KEY_ENTER:
+    case 10:
+        // Bestätigen
+        valid = check_sudoku(board_win, stats->fields);
+        if (valid == -1){
+            stats->mistakes++;
+            if (stats->mistakes >= stats->max_mistakes){
+                print_gameover();
+            }else{
+                print_mistakes(stats_win, *stats);
+            }
+        }else{
+            print_success(*stats);
+        }
+        break;
+
     case KEY_HOME:
     default:
         success = 0;
@@ -98,17 +115,17 @@ void use_input(
     /*
      * Debugging
     //mvwprintw(board, *y_player, *x_player, "P");
-    mvprintw(15, 40, "          ");
     mvprintw(16, 40, "          ");
     mvprintw(17, 40, "          ");
     mvprintw(18, 40, "          ");
     mvprintw(20, 40, "          ");
     mvprintw(21, 40, "          ");
+    mvprintw(15, 40, "          ");
+    mvprintw(15, 40, "K:%d", ch);
 
     // Bewegung oder Aktion hat funktioniert
     mvprintw(16, 40, "S:%d", success);
 
-    mvprintw(15, 40, "K:%d", ch);
     mvprintw(17, 40, "Y:%d", *y_player);
     mvprintw(18, 40, "X:%d", *x_player);
 
@@ -120,6 +137,9 @@ void use_input(
     */
 }
 
+/*
+ * Bewegungen auf dem Sudokufeld
+ */
 int move_up(int *y_player)
 {
     if (*y_player >= 3)
@@ -203,7 +223,8 @@ int select_choice(struct menu_choice choices[CHOICES], struct Stats *stats)
     // Start
     case 0:
         // Normaler starten in ein neues Spiel
-        random_grid(stats->fields);
+        //random_grid(stats->fields);
+        get_difficulty(stats);
         done = 1;
         break;
     // Laden
@@ -230,23 +251,23 @@ int select_choice(struct menu_choice choices[CHOICES], struct Stats *stats)
     return done;
 }
 
-/**
+/*
  * Ändert ein Feld ab
  */
 int change_field(int index_y, int index_x, int ch, struct Stats *stats)
 {
     int val = char_to_num(ch);
 
-    //if (stats->fields[index_x][index_y] == 0){
-    // TODO: if correct value
-    stats->fields[index_x][index_y] = val;
-    // TODO: else stats->mistakes += 1 && return -1
-    //}
+    // Nur wenn das Feld ursprünglich nicht gefüllt war änderbar
+    if (stats->starting_fields[index_x][index_y] == 0){
+        stats->fields[index_x][index_y] = val;
+        return 0;
+    }else
+        return -1;
 
-    return 0;
 }
 
-/**
+/*
  * Konvertiert ein Char-value zu der jeweiligen Nummer
  */
 int char_to_num(int ch)

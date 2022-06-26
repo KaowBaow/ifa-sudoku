@@ -3,10 +3,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include<unistd.h>
+
 //logic
 #define SIZE 9
-void sudokuErorr(char *s,int i,int j);
-void checkSudoku(int a[SIZE][SIZE]);
+//void sudokuErorr(char *s,int i,int j);
+int check_sudoku(WINDOW * board_win, int a[SIZE][SIZE]);
 
 // Stats
 struct Stats{
@@ -17,7 +18,8 @@ struct Stats{
     int available_tips;
     // enum "LOW" "MED" "HARD"
     char difficulty[6];
-    int fields[9][9];
+    int fields[SIZE][SIZE];
+    int starting_fields[SIZE][SIZE];
 };
 struct Stats getStats();
 
@@ -38,6 +40,9 @@ void print_menu(WINDOW* main_win, struct Stats *stats);
 void print_game(int fields[9][9], WINDOW * main_win, WINDOW * board_win, WINDOW * stats_win, struct Stats stats);
 void print_board(int fields[9][9], WINDOW * board_win);
 void print_affected(WINDOW* board_win, int index_y, int index_x);
+void print_success(struct Stats stats);
+void print_mistakes(WINDOW * win, struct Stats);
+void print_gameover();
 
 void random_grid(int (*fields)[9]);
 
@@ -50,4 +55,6 @@ void use_input(int ch, WINDOW * main_win, WINDOW * board_win, WINDOW * stats_win
 void index_to_position( int index_y, int index_x, int *position_y, int *position_x);
 void position_to_index(int position_y, int position_x, int *index_y, int *index_x);
 
+// Schwierigkeitsgrad
 void change_difficulty(struct Stats *stats, int val);
+void get_difficulty(struct Stats *stats);
