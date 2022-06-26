@@ -72,6 +72,9 @@
 		<Unit filename="controls.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="difficulties.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="display.c">
 			<Option compilerVar="CC" />
 		</Unit>
