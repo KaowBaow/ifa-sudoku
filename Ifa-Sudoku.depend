@@ -1,0 +1,44 @@
+# depslib dependency file v1.0
+1656149939 source:c:\users\p.tiemann\documents\berufsschule\softwareenwicklung\sudoku\ifa-sudoku\controls.c
+	"sudoku.h"
+	<stdlib.h>
+
+1656155933 c:\users\p.tiemann\documents\berufsschule\softwareenwicklung\sudoku\ifa-sudoku\sudoku.h
+	<time.h>
+	"lib/include/ncursesw/curses.h"
+	<stdlib.h>
+	<string.h>
+	<unistd.h>
+
+1656155731 c:\users\p.tiemann\documents\berufsschule\softwareenwicklung\sudoku\ifa-sudoku\lib\include\ncursesw\curses.h
+	"ncurses_dll.h"
+	<stdint.h>
+	<stdnoreturn.h>
+	<stdio.h>
+	<stdarg.h>
+	<stddef.h>
+	<stdbool.h>
+	<libutf8.h>
+	<wchar.h>
+	"unctrl.h"
+
+1656152439 c:\users\p.tiemann\documents\berufsschule\softwareenwicklung\sudoku\ifa-sudoku\lib\include\ncursesw\ncurses_dll.h
+
+1656155747 c:\users\p.tiemann\documents\berufsschule\softwareenwicklung\sudoku\ifa-sudoku\lib\include\ncursesw\unctrl.h
+	"curses.h"
+
+1656149939 source:c:\users\p.tiemann\documents\berufsschule\softwareenwicklung\sudoku\ifa-sudoku\display.c
+	"sudoku.h"
+
+1656155933 source:c:\users\p.tiemann\documents\berufsschule\softwareenwicklung\sudoku\ifa-sudoku\logic.c
+	"sudoku.h"
+
+1656149939 source:c:\users\p.tiemann\documents\berufsschule\softwareenwicklung\sudoku\ifa-sudoku\stats.c
+	"sudoku.h"
+
+1656149939 source:c:\users\p.tiemann\documents\berufsschule\softwareenwicklung\sudoku\ifa-sudoku\sudoku.c
+	"sudoku.h"
+
+1656156570 source:c:\users\p.tiemann\documents\berufsschule\softwareenwicklung\sudoku\ifa-sudoku\main.c
+	"sudoku.h"
+
