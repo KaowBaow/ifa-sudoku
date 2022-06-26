@@ -37,7 +37,7 @@ int select_choice(struct menu_choice choices[CHOICES], struct Stats *stats);
 // Globale Display Funktionen
 void init_color_sceem();
 void print_welcome_screen();
-void print_timer(WINDOW * stats_win, int time_started);
+void print_timer(WINDOW * stats_win, struct Stats * stats);
 void print_menu(WINDOW* main_win, struct Stats *stats);
 void print_game(int fields[9][9], WINDOW * main_win, WINDOW * board_win, WINDOW * stats_win, struct Stats stats);
 void print_board(int fields[9][9], WINDOW * board_win);

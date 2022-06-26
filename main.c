@@ -62,7 +62,7 @@ int main(void)
         // Userinput verarbeiten
         use_input(ch, main_win, board_win, stats_win, &y_player, &x_player, &stats);
         // Timer neu schreiben
-        print_timer(stats_win, stats.time_started);
+        print_timer(stats_win, &stats);
     }
 
     // Beenden des Programms

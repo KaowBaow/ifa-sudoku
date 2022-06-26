@@ -147,12 +147,12 @@ void print_controls(WINDOW * win,int board_height)
 /*
  * Schreibt einen Timer
  */
-void print_timer(WINDOW *stats_win, int time_started)
+void print_timer(WINDOW *stats_win, struct Stats *stats)
 {
     int time_now = time(NULL);
-    int time_elapsed = time_now - time_started;
-    int minutes = (int)(time_elapsed / 60);
-    int seconds = time_elapsed - (minutes * 60);
+    stats->time_elapes = time_now - stats->time_started;
+    int minutes = (int)(stats->time_elapes / 60);
+    int seconds = stats->time_elapes - (minutes * 60);
 
     // Wenn der Displaystring beim Umspringen auf eine neue Minute kleiner wird.
     // TODO: alternativ Sekunden immer 2-Stellig darstellen
@@ -174,7 +174,7 @@ void print_stats(WINDOW *stats_win, struct Stats stats)
 {
     int h_align = 2;
     mvwaddstr(stats_win, 1, h_align, "Zeit");
-    print_timer(stats_win, stats.time_started);
+    print_timer(stats_win, &stats);
 
     mvwaddstr(stats_win, 4, h_align, "Fehler");
     print_mistakes(stats_win, stats);
@@ -432,6 +432,10 @@ void print_affected(WINDOW* board_win, int index_y, int index_x)
 void print_success(struct Stats stats)
 {
     clear();
+    char timer_display[100];
+    int minutes = (int)(stats.time_elapes / 60);
+    int seconds = stats.time_elapes - (minutes * 60);
+    sprintf(timer_display, "Du hast es in %d:%d Minuten geschafft!", minutes, seconds);
 
     mvaddstr(2, 3, " __     ______  _    _ ");
     mvaddstr(3, 3, " \\ \\   / / __ \\| |  | |");
@@ -444,7 +448,7 @@ void print_success(struct Stats stats)
     mvaddstr(10, 3, "   \\ \\/  \\/ /| |  | | . ` | |");
     mvaddstr(11, 3, "    \\  /\\  / | |__| | |\\  |_|");
     mvaddstr(12, 3, "     \\/  \\/   \\____/|_| \\_(_)");
-    mvaddstr(13, 3, "Du hast es in ... geschafft");
+    mvaddstr(13, 3, timer_display);
 
     refresh();
     sleep(10);
