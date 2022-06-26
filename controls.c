@@ -120,8 +120,12 @@ void use_input(
         break;
     }
     reverse_position(board_win, *y_player, *x_player, 1);
-    position_to_index(*y_player, *x_player, &index_y, &index_x);
-    //print_affected(board_win, index_y, index_x);
+
+    if (success == -1){
+        mvwaddstr(main_win, 40, 40, "Error");
+    }else{
+        mvwaddstr(main_win, 40, 40, "     ");
+    }
     refresh();
 }
 
