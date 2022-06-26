@@ -16,7 +16,7 @@ void use_input(
     int *y_player, int *x_player, struct Stats *stats
 )
 {
-    // TODO: success wird gerade tatsächlich nicht ausgewertet... 
+    // TODO: success wird gerade tatsächlich nicht ausgewertet...
     // entweder eine Art feedback dastellen oder entfernen
     int success;
     int index_y;
@@ -91,14 +91,20 @@ void use_input(
     case 10:
         // Bestätigen
         valid = check_sudoku(board_win, stats->fields);
-        if (valid == -1){
+        if (valid == -1)
+        {
             stats->mistakes++;
-            if (stats->mistakes >= stats->max_mistakes){
+            if (stats->mistakes >= stats->max_mistakes)
+            {
                 print_gameover();
-            }else{
+            }
+            else
+            {
                 print_mistakes(stats_win, *stats);
             }
-        }else{
+        }
+        else
+        {
             print_success(*stats);
         }
         break;
@@ -259,10 +265,12 @@ int change_field(int index_y, int index_x, int ch, struct Stats *stats)
     int val = char_to_num(ch);
 
     // Nur wenn das Feld ursprünglich nicht gefüllt war änderbar
-    if (stats->starting_fields[index_x][index_y] == 0){
+    if (stats->starting_fields[index_x][index_y] == 0)
+    {
         stats->fields[index_x][index_y] = val;
         return 0;
-    }else
+    }
+    else
         return -1;
 
 }

@@ -10,7 +10,8 @@
 int check_sudoku(WINDOW * board_win, int a[SIZE][SIZE]);
 
 // Stats
-struct Stats{
+struct Stats
+{
     time_t time_started;
     time_t time_elapes;
     int mistakes;
@@ -23,7 +24,8 @@ struct Stats{
 };
 struct Stats getStats();
 
-struct menu_choice{
+struct menu_choice
+{
     char display[12];
     int highlighted;
 };
@@ -58,3 +60,4 @@ void position_to_index(int position_y, int position_x, int *index_y, int *index_
 // Schwierigkeitsgrad
 void change_difficulty(struct Stats *stats, int val);
 void get_difficulty(struct Stats *stats);
+
