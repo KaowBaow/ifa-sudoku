@@ -69,7 +69,6 @@ void print_board(int fields[9][9], WINDOW * field)
 {
     int index_y,index_x;
     int position_x, position_y;
-    char *val;
 
     // Loop über alle Felder
     for(index_y = 0; index_y < 9; ++index_y)
@@ -81,8 +80,8 @@ void print_board(int fields[9][9], WINDOW * field)
             {
                 // findet die relevante position
                 index_to_position(index_y, index_x, &position_y, &position_x);
+                char val[3];
                 sprintf(val, "%d", fields[index_x][index_y]);
-
                 mvwaddstr(field, position_y, position_x, val);
             }
         }
